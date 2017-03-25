@@ -1,0 +1,17 @@
+- Make path visualization with thicker edges actually work
+- Replace collision checking in environment with FCL
+- Replace nearest neighbors checks in Graph with FLANN
+- Add some notion of a robot
+- Add a way for PRMPlanner to save map and roadmap for repeated use (pickle?)
+
+- Write ROS wrapper to communicate with cozmo
+	- inputs from robot: current position of robot (we are assuming known map), goal for robot
+	- outputs: path as set of configurations/points
+
+- Start MRdRRT implementation
+	- implement DiscreteGraph class
+	- implement Tree class
+
+
+Notes
+- We are assuming known map right now, constructed in SimpleEnvironment.InitMap

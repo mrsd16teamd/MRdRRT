@@ -7,7 +7,13 @@ class SimpleEnvironment(object):
         self.lower_limits = np.array([-50., -50.])    #[cm]
         self.upper_limits = np.array([50., 50.])
 
-        # Add all obstacles in map
+        self.InitMap()
+
+        # TODO add robots
+        self.robots = []
+
+    def InitMap(self):
+        """Add all obstacles in map"""
         self.obstacles = []
         cube_width = 5 #[cm]
         expand_obs = 3
@@ -16,9 +22,6 @@ class SimpleEnvironment(object):
         # define vertices - make sure they're in order
         cube1 = np.array([[0,0],[w, 0],[w, w], [0, w]])
         self.obstacles.append(cube1)
-
-        # TODO add robots
-        self.robots = []
 
     def ComputeDistance(self, config1, config2):
         dist = np.linalg.norm(config1-config2)
@@ -31,7 +34,8 @@ class SimpleEnvironment(object):
                 return rand_config
 
     def CheckCollision(self, config):
-        # TODO hack this together, then implement better method
+        # TODO implement better method with FCL
+        # This only works for axis-aligned rectangles defined as [bottom left, __, top right, __]
         for o in self.obstacles:
             bl = o[0]
             tr= o[2]
@@ -67,10 +71,10 @@ class SimpleEnvironment(object):
         pl.ion()
         pl.show()
 
-    def PlotEdge(self, sconfig, econfig, color='k-'):
+    def PlotEdge(self, sconfig, econfig, color='k-', linewidth=1.0):
         pl.plot([sconfig[0], econfig[0]],
                 [sconfig[1], econfig[1]],
-                color, linewidth=1)
+                color, linewidth)
         pl.draw()
 
     def PlotPoint(self, config, color='b'):
