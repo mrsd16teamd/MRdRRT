@@ -14,7 +14,7 @@ class MRdRRTPlanner(object):
 
     def LocalConnector(self):
         # Just do naïve local connector first, where you move the robots at
-        # constant "phase"/alpha along their paths and check for collisions. 
+        # constant "phase"/alpha along their paths and check for collisions.
         pass
 
     def Expand(self,T):
@@ -31,8 +31,3 @@ class MRdRRTPlanner(object):
         self.T = Tree()
         # TODO put MRdRRT here
         pass
-
-# in DiscreteGraph
-# RandomSample()
-# NearestNeighbor(Tree,qrand)
-# NearestNeighbors(Tree,goal,K) K=number of neighbors
