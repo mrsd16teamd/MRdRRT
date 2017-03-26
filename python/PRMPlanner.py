@@ -6,13 +6,13 @@ import cPickle as pickle
 
 class PRMPlanner(object):
 
-    def __init__(self, planning_env, N=300, load=True, visualize=False):
-        self.graph = Graph(planning_env)
-        self.env = planning_env
+    def __init__(self, N=300, load=True, visualize=False, filepath=None):
+        self.env = SimpleEnvironment()
+        self.graph = Graph(self.env)
         self.N = N
         self.visualize = visualize
         if load:
-            self.LoadRoadmap()
+            self.LoadRoadmap(filepath)
         if self.visualize:
             self.env.InitializePlot()
 
@@ -37,9 +37,9 @@ class PRMPlanner(object):
         prm_graph['edges'] = self.graph.edges
         pickle.dump(prm_graph, open( "prm_save.p", "wb" ) )
 
-    def LoadRoadmap(self):
+    def LoadRoadmap(self, filepath='prm_save.p'):
         print("Loading roadmap.")
-        prm_graph = pickle.load( open('prm_save.p', 'rb') )
+        prm_graph = pickle.load( open(filepath, 'rb') )
         self.graph.vertices = prm_graph['vertices']
         self.graph.edges = prm_graph['edges']
 

@@ -10,8 +10,7 @@ from SimpleEnvironment import SimpleEnvironment
 from PRMPlanner import PRMPlanner
 
 if __name__ == "__main__":
-    env = SimpleEnvironment()
-    prm = PRMPlanner(env, N=300, load=True, visualize=True)
+    prm = PRMPlanner(N=300, load=True, visualize=True)
 
     prm.PlotRoadmap()
 
