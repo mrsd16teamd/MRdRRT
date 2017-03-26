@@ -1,5 +1,6 @@
 import numpy as np
 import pylab as pl
+from sys import platform
 
 class SimpleEnvironment(object):
 
@@ -68,7 +69,8 @@ class SimpleEnvironment(object):
             self.PlotPolygon(o)
 
         #TODO plot robots
-
+        
+        # if platform=="darwin":
         pl.ion()
         pl.show()
 

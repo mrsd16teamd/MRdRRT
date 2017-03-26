@@ -4,7 +4,7 @@ import argparse, time
 import numpy as np
 import sys
 
-from SimpleRobot import SimpleRobot
+# from SimpleRobot import SimpleRobot
 from SimpleEnvironment import SimpleEnvironment
 
 from PRMPlanner import PRMPlanner
