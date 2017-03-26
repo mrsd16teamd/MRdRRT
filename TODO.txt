@@ -1,9 +1,9 @@
-- Replace collision checking in environment with FCL
-- Replace nearest neighbors checks in Graph with FLANN
-
 - Write ROS wrapper to communicate with cozmo
 	- inputs from robot: current position of robot (we are assuming known map), goal for robot
 	- outputs: path as set of configurations/points
+
+- Replace collision checking in environment with FCL
+- Replace nearest neighbors checks in Graph with FLANN
 
 - Start MRdRRT implementation
 	- implement ImplicitGraph class
