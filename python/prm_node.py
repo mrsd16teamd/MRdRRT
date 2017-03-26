@@ -1,13 +1,16 @@
 #!/usr/bin/env python
-import numpy as np
 import rospy
+import tf
+
+import std_msgs.msg
 import geometry_msgs.msg
 import nav_msgs.msg
+from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
-import roslaunch
-import tf
-from PRMPlanner import PRMPlanner
 # from mrdrrt.srv import PrmSrv
+
+import numpy as np
+from PRMPlanner import PRMPlanner
 
 # This node will listen for service calls from a robot for a goal state
 # We will then find the current state of the robot, and use a PRM to
@@ -27,11 +30,28 @@ class PRMPlannerNode(object):
         (trans,rot) = listener.lookupTransform('/world', '/base_link', rospy.Time(0))
         start_config = np.array([trans[0], trans[1]])
 
-        path = self.prm.PlanPath(start_config, goal_config)
+        prm_path = self.prm.PlanPath(start_config, goal_config)
 
-        #TODO process path and publish as nav_msgs/Path
+        #Process path and publish as nav_msgs/Path
         # - header
         # - geometry_msgs/PoseStamped[] poses
+        # TODO test this
+		if len(path)!=0:
+            plan_msg = Path()
+
+            h = std_msgs.msg.Header()
+            h.stamp = rospy.Time.now()
+            plan_msg.header = h
+
+            for config in prm_path:
+                pose = PoseStamped()
+                pose.x = config[0]
+                pose.y = config[1]
+                pose.theta = 0  # Do we need this?
+                Path.poses.append(pose)
+
+            plan_pub.publish(plan_msg)
+
 
 if __name__ == '__main__':
     prmnode = PRMPlannerNode()
