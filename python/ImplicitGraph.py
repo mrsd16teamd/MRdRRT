@@ -2,6 +2,7 @@ from SimpleEnvironment import SimpleEnvironment
 from PRMPlanner import PRMPlanner
 from Graph import Graph
 import numpy as np
+import itertools
 
 class ImplicitGraph(object):
     def __init__(self, env, roadmap, n_robots=2):
@@ -20,18 +21,13 @@ class ImplicitGraph(object):
         Input: node as set of IDs for each PRM (list)
         Output: list of nodes (list of PRM node ids)
         """
-        # TODO test this
-        neighbors_of_each = [] # list of lists - neig
-        for i in len(node):
+        neighbors_of_each = [] # list of lists
+        for i in range(len(node)):
             neighbors_of_each.append(self.roadmap.edges[node[i]])
+
+        # Return all possible combinations of neighbors
         neighbors = list(itertools.product(*neighbors_of_each))
-
-    def NearestNeighbor(Tree, qrand):
-        # TODO Move this to Tree?
-        pass
-
-    def NearestNeighbors(Tree, goal, K):
-        pass
+        return neighbors
 
     def FindPath(self, sconfig, gconfig):
         # Find nearest vertices to sconfig and gconfig
@@ -40,8 +36,8 @@ class ImplicitGraph(object):
 
 if __name__ == "__main__":
     env = SimpleEnvironment()
-    prm = PRMPlanner(env, N=300, load=True, visualize=False)
-    ImplicitGraph(env, prm)
-
+    prm = PRMPlanner(N=300, load=True, filepath='prm_save.p', visualize=False)
+    igraph = ImplicitGraph(env, prm)
+    test = igraph.GetNeighbors([33, 100])
     import IPython
     IPython.embed()

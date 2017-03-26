@@ -5,6 +5,11 @@ import itertools
 #TODO adjust this for need of MRdRRT
 
 class Tree(object):
+    """
+    Tree structure, meant for use with implicit graph in MRdRRT.
+    In this class, 'configuration' refers to a list of PRM node IDs, which
+    correspond to positions of the robots.
+    """
 
     def __init__(self, planning_env):
         self.vertices = []
@@ -29,6 +34,18 @@ class Tree(object):
                 min_dist = self.env.ComputeDistance(config, v)
                 min_id = vid
         return min_id
+
+    def NearestNeighbor(Tree, qrand):
+        """
+        Given random composite configuration, find closest one in current tree.
+        """
+        pass
+
+    def NearestNeighbors(Tree, goal, K):
+        """
+        Find K closest neighbors to goal state in current tree.
+        """
+        pass
 
     def GetPath(self):
         # TODO
