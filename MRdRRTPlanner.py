@@ -3,11 +3,13 @@ from Graph import Graph
 from SimpleEnvironment import SimpleEnvironment
 from PRMPlanner import PRMPlanner
 from Tree import Tree
+from ImplicitGraph import ImplicitGraph
 
 class MRdRRTPlanner(object):
     def __init__(self, prm, visualize=False):
-        self.roadmap = prm.graph
         self.env = prm.env
+        self.implicitgraph = ImplicitGraph()
+        self.tree = Tree()  # Tree that grows from starting configuration
 
     def Oracle(self,qnear,qrand):
         pass

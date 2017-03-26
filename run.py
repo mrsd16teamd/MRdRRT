@@ -15,12 +15,12 @@ if __name__ == "__main__":
 
     prm.PlotRoadmap()
 
-    # print("Finding path from start to goal config...")
-    # start_config = np.array([30,30])
-    # goal_config = np.array([-20,-20])
-    # path = prm.FindPath(start_config, goal_config)
-    # if len(path)==0:
-    #     sys.exit()
+    print("Finding path from start to goal config...")
+    start_config = np.array([30,30])
+    goal_config = np.array([-20,-20])
+    path = prm.FindPath(start_config, goal_config)
+    if len(path)==0:
+        sys.exit()
     raw_input("Check path.")
 
     # import IPython
