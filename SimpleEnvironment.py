@@ -28,6 +28,7 @@ class SimpleEnvironment(object):
         return dist
 
     def SampleConfig(self):
+        """Generates random configuration in Cfree"""
         while True:
             rand_config = self.lower_limits + np.multiply(np.random.rand(1,2),self.upper_limits-self.lower_limits)[0]
             if (not (self.CheckCollision(rand_config))):
@@ -71,15 +72,15 @@ class SimpleEnvironment(object):
         pl.ion()
         pl.show()
 
-    def PlotEdge(self, sconfig, econfig, color='k-', linewidth=1.0):
+    def PlotEdge(self, sconfig, econfig, color='k-', lwidth=1.0):
         pl.plot([sconfig[0], econfig[0]],
                 [sconfig[1], econfig[1]],
-                color, linewidth)
+                color, linewidth=lwidth)
         pl.draw()
 
-    def PlotPoint(self, config, color='b'):
+    def PlotPoint(self, config, color='b',size=5):
         marker = color + 'o'
-        pl.plot(config[0],config[1], marker)
+        pl.plot(config[0],config[1],marker,markersize=size)
 
 if __name__ == "__main__":
     env = SimpleEnvironment()

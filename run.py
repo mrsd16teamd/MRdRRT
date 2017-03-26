@@ -11,16 +11,16 @@ from PRMPlanner import PRMPlanner
 
 if __name__ == "__main__":
     env = SimpleEnvironment()
-    prm = PRMPlanner(env, N=300, visualize=True)
-    prm.GenerateRoadmap()
-    raw_input("Done making roadmap.")
+    prm = PRMPlanner(env, N=300, load=True, visualize=True)
 
-    print("Finding path from start to goal config...")
-    start_config = np.array([30,30])
-    goal_config = np.array([-20,-20])
-    path = prm.FindPath(start_config, goal_config)
-    if len(path)==0:
-        sys.exit()
+    prm.PlotRoadmap()
+
+    # print("Finding path from start to goal config...")
+    # start_config = np.array([30,30])
+    # goal_config = np.array([-20,-20])
+    # path = prm.FindPath(start_config, goal_config)
+    # if len(path)==0:
+    #     sys.exit()
     raw_input("Check path.")
 
     # import IPython

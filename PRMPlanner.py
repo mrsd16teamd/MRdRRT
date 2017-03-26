@@ -2,14 +2,17 @@ import numpy as np
 from Graph import Graph
 from SimpleEnvironment import SimpleEnvironment
 import time
+import cPickle as pickle
 
 class PRMPlanner(object):
 
-    def __init__(self, planning_env, N=300, visualize=False):
+    def __init__(self, planning_env, N=300, load=True, visualize=False):
         self.graph = Graph(planning_env)
         self.env = planning_env
         self.N = N
         self.visualize = visualize
+        if load:
+            self.LoadRoadmap()
         if self.visualize:
             self.env.InitializePlot()
 
@@ -17,27 +20,42 @@ class PRMPlanner(object):
         while (len(self.graph.vertices) < self.N):
             # Genereate random sample, check that's in Cfree
             qnew = self.env.SampleConfig()
-            if not self.env.CheckCollision(qnew):
-                new_id = self.graph.AddVertex(qnew)
+            new_id = self.graph.AddVertex(qnew)
 
-                if self.visualize:
-                    self.env.PlotPoint(qnew)
+            # Get neighbors for new node, check for collision on edge and add to PRM
+            n_ids,n_configs = self.graph.GetNeighbors(new_id)
+            for i, n_id in enumerate(n_ids):
+                if not self.env.CollisionOnLine(qnew, n_configs[i]):
+                    self.graph.AddEdge(new_id, n_id)
 
-                # Get neighbors for new node, check for collision on edge and add to PRM
-                n_ids,n_configs = self.graph.GetNeighbors(new_id)
-                for i, n_id in enumerate(n_ids):
-                    if not self.env.CollisionOnLine(qnew, n_configs[i]):
-                        self.graph.AddEdge(new_id, n_id)
+        if self.visualize:
+            self.PlotRoadmap()
 
-                        if self.visualize:
-                            self.env.PlotEdge(self.graph.vertices[new_id], self.graph.vertices[n_id])
+    def SaveRoadmap(self):
+        prm_graph = dict()
+        prm_graph['vertices'] = self.graph.vertices
+        prm_graph['edges'] = self.graph.edges
+        pickle.dump(prm_graph, open( "prm_save.p", "wb" ) )
+
+    def LoadRoadmap(self):
+        print("Loading roadmap.")
+        prm_graph = pickle.load( open('prm_save.p', 'rb') )
+        self.graph.vertices = prm_graph['vertices']
+        self.graph.edges = prm_graph['edges']
+
+    def PlotRoadmap(self):
+        print("Plotting roadmap..")
+        for i,v in enumerate(self.graph.vertices):
+            self.env.PlotPoint(v)
+            for n in self.graph.edges[i]:
+                self.env.PlotEdge(v,self.graph.vertices[n])
 
     def VisualizePath(self, path):
-        self.env.PlotPoint(path[0],'g')
-        self.env.PlotPoint(path[-1],'y')
+        self.env.PlotPoint(path[0],'g',7)
+        self.env.PlotPoint(path[-1],'y',7)
         for i,config in enumerate(path[0:-1]):
             #TODO make this linewidth thing actually work
-            self.env.PlotEdge(path[i],path[i+1],'g-', 2.5)
+            self.env.PlotEdge(path[i],path[i+1],'g-', 2)
 
     def FindPath(self, sconfig, gconfig):
         # Find nearest vertices to sconfig and gconfig
