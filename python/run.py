@@ -3,6 +3,7 @@
 import argparse, time
 import numpy as np
 import sys
+from sys import platform
 
 # from SimpleRobot import SimpleRobot
 from SimpleEnvironment import SimpleEnvironment
@@ -10,9 +11,9 @@ from SimpleEnvironment import SimpleEnvironment
 from PRMPlanner import PRMPlanner
 
 if __name__ == "__main__":
-    prm = PRMPlanner(N=300, load=True, visualize=True)
+    prm = PRMPlanner(N=300, load=True, visualize=False)
 
-    prm.PlotRoadmap()
+    # prm.PlotRoadmap()
 
     print("Finding path from start to goal config...")
     start_config = np.array([30,30,0])

@@ -7,7 +7,7 @@ import cPickle as pickle
 class PRMPlanner(object):
 
     def __init__(self, N=300, load=True, visualize=False, filepath=None):
-        self.env = SimpleEnvironment()
+        self.env = SimpleEnvironment(visualize)
         self.graph = Graph(self.env)
         self.N = N
         self.visualize = visualize
@@ -28,7 +28,7 @@ class PRMPlanner(object):
                 if not self.env.CollisionOnLine(qnew, n_configs[i]):
                     self.graph.AddEdge(new_id, n_id)
 
-        if self.visualize:
+        if self.visualize==True:
             self.PlotRoadmap()
 
     def SaveRoadmap(self):
