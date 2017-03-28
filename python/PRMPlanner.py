@@ -12,7 +12,7 @@ class PRMPlanner(object):
         self.N = N
         self.visualize = visualize
         if load:
-            self.LoadRoadmap(filepath)
+            self.LoadRoadmap()
         if self.visualize:
             self.env.InitializePlot()
 
@@ -55,20 +55,44 @@ class PRMPlanner(object):
         self.env.PlotPoint(path[-1],'y',7)
         for i,config in enumerate(path[0:-1]):
             #TODO make this linewidth thing actually work
-            self.env.PlotEdge(path[i],path[i+1],'g-', 2)
+            self.env.PlotEdge(path[i],path[i+1],'g-', 3)
+
+    def PostProcessPRMPath(self, point_path, sconfig, gconfig):
+        """
+        Does two things: add angles to path, add start and goal configs
+        For angles, just points robot towards next waypoint.
+        """
+        # TODO check collision along these edges? What to do if there is one?
+        point_path.insert(0, sconfig[0:2])  # assume we don't need start pose in waypoint list
+        point_path.append(gconfig[0:2])
+
+        path_w_angles = []
+        for i,point in enumerate(point_path[0:-1]):  # First point -> second to last
+            vec2next = point_path[i+1] - point_path[i]
+            angle = np.arctan2(vec2next[1], vec2next[0])
+            config = np.append(point, angle)
+            path_w_angles.append(config)
+
+        path_w_angles.append(gconfig)
+        return path_w_angles
 
     def FindPath(self, sconfig, gconfig):
-        # Find nearest vertices to sconfig and gconfig
-        sid = self.graph.GetNearestNode(sconfig)
-        gid = self.graph.GetNearestNode(gconfig)
+        """
+        Find nearest vertices to sconfig and gconfig
+        input should be in numpy arrays of dim 3
+        """
+        sid = self.graph.GetNearestNode(sconfig[0:2])
+        gid = self.graph.GetNearestNode(gconfig[0:2])
+        start_angle = sconfig[0]
+        goal_angle = gconfig[2]
 
-        path = self.graph.Djikstra(sid, gid)
-        if len(path)==0:
+        point_path = self.graph.Djikstra(sid, gid)
+        if len(point_path)==0:
             return []
 
-        # TODO check collision along these edges? What to do if there is one?
-        path.insert(0, sconfig)
-        path.append(gconfig)
+        # Add angles and sconfig, gconfig
+        path = self.PostProcessPRMPath(point_path, sconfig, gconfig)
+
         if self.visualize:
-            self.VisualizePath(path)
+            self.VisualizePath(point_path)
         return path

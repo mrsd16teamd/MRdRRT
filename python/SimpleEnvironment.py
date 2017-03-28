@@ -69,18 +69,18 @@ class SimpleEnvironment(object):
             self.PlotPolygon(o)
 
         #TODO plot robots
-        
+
         # if platform=="darwin":
         pl.ion()
         pl.show()
 
-    def PlotEdge(self, sconfig, econfig, color='k-', lwidth=1.0):
+    def PlotEdge(self, sconfig, econfig, color='k-', lwidth=0.5):
         pl.plot([sconfig[0], econfig[0]],
                 [sconfig[1], econfig[1]],
                 color, linewidth=lwidth)
         pl.draw()
 
-    def PlotPoint(self, config, color='b',size=5):
+    def PlotPoint(self, config, color='b',size=1):
         marker = color + 'o'
         pl.plot(config[0],config[1],marker,markersize=size)
 
