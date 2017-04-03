@@ -50,12 +50,12 @@ class PRMPlanner(object):
             for n in self.graph.edges[i]:
                 self.env.PlotEdge(v,self.graph.vertices[n])
 
-    def VisualizePath(self, path):
+    def VisualizePath(self, path, edgecolor='g-'):
         self.env.PlotPoint(path[0],'g',7)
-        self.env.PlotPoint(path[-1],'y',7)
+        self.env.PlotPoint(path[-1],'m',7)
         for i,config in enumerate(path[0:-1]):
             #TODO make this linewidth thing actually work
-            self.env.PlotEdge(path[i],path[i+1],'g-', 3)
+            self.env.PlotEdge(path[i],path[i+1],edgecolor, 2)
 
     def PostProcessPRMPath(self, point_path, sconfig, gconfig):
         """

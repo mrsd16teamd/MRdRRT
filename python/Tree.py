@@ -11,42 +11,39 @@ class Tree(object):
     correspond to positions of the robots.
     """
 
-    def __init__(self, planning_env):
-        self.vertices = []
-        self.edges = defaultdict(list)
+    def __init__(self, planning_env,implicit_graph):
+        self.vertices = []      # vertices of node ids
+        self.edges = dict()
         self.env = planning_env
+        self.implicitgraph = implicit_graph
 
     def AddVertex(self, config):
         vid = len(self.vertices)
         self.vertices.append(config)
+        # self.id_vertices.append(ids)
         return vid
 
     def AddEdge(self, sid, eid):
-        # Each node points to its parent/where it came from
-        self.edges[eid].append(sid)
+        # Each node points to its parent (where it came from)
+        self.edges[eid] = sid
 
-    def GetNearestNode(self, config):
-        #return vid and v_config of nearest node in graph
-        min_dist = 9999
-        min_id = 0
-        for vid, v in enumerate(self.vertices):
-            if(self.env.ComputeDistance(config, v) < min_dist):
-                min_dist = self.env.ComputeDistance(config, v)
-                min_id = vid
-        return min_id
+    def NearestNeighbors(self, config, K):
+        """
+        Given composite configuration, find K closest ones in current tree.
+        """
+        # TODO Actually support K nearest neighbors instead of just one
+        # For now, we're just doing nearest neighbor
 
-    def NearestNeighbor(Tree, qrand):
-        """
-        Given random composite configuration, find closest one in current tree.
-        """
-        pass
+        min_dist = float("inf")
+        nearest = None
+        nid = None
 
-    def NearestNeighbors(Tree, goal, K):
-        """
-        Find K closest neighbors to goal state in current tree.
-        """
-        pass
+        for vid, node in enumerate(self.vertices):
+            node_config = self.implicitgraph.NodeIdsToConfigs(node)
+            dist = self.implicitgraph.ComputeCompositeDistance(node_config, config)
+            if (dist<min_dist):
+                dist = min_dist
+                nearest = node
+                nid = vid
 
-    def GetPath(self):
-        # TODO
-        pass
+        return nearest, nid

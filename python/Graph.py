@@ -34,7 +34,7 @@ class Graph(object):
         return neighbor_ids, neighbor_configs
 
     def GetNearestNode(self, config):
-        #return vid and v_config of nearest node in graph
+        #return vid of nearest node in graph
         min_dist = 9999
         min_id = 0
         for vid, v in enumerate(self.vertices):

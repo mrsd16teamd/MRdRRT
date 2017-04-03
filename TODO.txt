@@ -1,19 +1,13 @@
-Question for Oren, if local_connector with ordering is done for each edge, and
+Question for Oren: if local_connector with ordering is done for each edge, and
 some edges require a certain order of movements to be collision-free, do we save
 the orderings in the edge?
 
-- Write ROS wrapper to communicate with cozmo
-	- inputs from robot: current position of robot (we are assuming known map), goal for robot
-	- outputs: path as set of configurations/points
+	- Clean up code!!!
 
-- Replace collision checking in environment with FCL
-- Replace nearest neighbors checks in Graph with FLANN
+	- Replace nearest neighbors checks in Graph with FLANN
 
-- Start MRdRRT implementation
-	- implement ImplicitGraph class
-	- implement Tree class
 	- Add some notion of a robot?
-	- Test/visualize for two robots starting for opposite sides of cube
+	- Replace collision checking in environment with FCL
 
 
 Notes

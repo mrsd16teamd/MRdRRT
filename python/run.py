@@ -6,22 +6,34 @@ import sys
 
 # from SimpleRobot import SimpleRobot
 from SimpleEnvironment import SimpleEnvironment
-
 from PRMPlanner import PRMPlanner
+from MRdRRTPlanner import MRdRRTPlanner
 
 if __name__ == "__main__":
-    prm = PRMPlanner(N=300, load=True, visualize=True)
+    prm = PRMPlanner(N=300, load=True, visualize=False)
+    # prm.env.InitializePlot()
+    # prm.PlotRoadmap()
 
-    prm.PlotRoadmap()
+    # raw_input("stop")
+    # import IPython
+    # IPython.embed()
 
-    print("Finding path from start to goal config...")
-    start_config = np.array([30,30,0])
-    goal_config = np.array([-20,-20,0])
-    path = prm.FindPath(start_config, goal_config)
-    print path
-    if len(path)==0:
-        sys.exit()
-    raw_input("Check path.")
+
+    # Test 2 robots
+    mrdrrt = MRdRRTPlanner(prm, 2, visualize=False)
+    # sconfigs = np.array([ [30,5], [5,30]])
+    # gconfigs = np.array([ [-30,5], [5,-30] ])
+    sconfigs = np.array([ [0,30], [-40,-30]])
+    gconfigs = np.array([ [40,-30], [0, 20] ])
+
+    # Test 3 robots
+    # mrdrrt = MRdRRTPlanner(prm, 3, visualize=False)
+    # sconfigs = np.array([ [30,5], [5,30], [30, 30]])
+    # gconfigs = np.array([ [-30,5], [5,-30], [30, -20] ])
+
+    path = mrdrrt.FindPath(sconfigs, gconfigs)
+    mrdrrt.VisualizePath(path)
+
 
     # import IPython
     # IPython.embed()
