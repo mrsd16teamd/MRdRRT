@@ -3,6 +3,7 @@
 import argparse, time
 import numpy as np
 import sys
+from sys import platform
 
 # from SimpleRobot import SimpleRobot
 from SimpleEnvironment import SimpleEnvironment
@@ -11,6 +12,7 @@ from MRdRRTPlanner import MRdRRTPlanner
 
 if __name__ == "__main__":
     prm = PRMPlanner(N=300, load=True, visualize=False)
+
     prm.env.InitializePlot()
     prm.PlotRoadmap()
     raw_input("stop")

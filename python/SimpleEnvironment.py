@@ -4,9 +4,10 @@ from sys import platform
 
 class SimpleEnvironment(object):
 
-    def __init__(self):
+    def __init__(self, visualize):
         self.lower_limits = np.array([-50., -50.])    #[cm]
         self.upper_limits = np.array([50., 50.])
+        self.visualize = visualize
 
         self.InitMap()
 
@@ -110,10 +111,9 @@ class SimpleEnvironment(object):
             self.PlotPolygon(o)
 
         #TODO plot robots
-
-        # if platform=="darwin":
-        pl.ion()
-        pl.show()
+        if self.visualize:
+            pl.ion()
+            pl.show()
 
     def PlotEdge(self, sconfig, econfig, color='k--', lwidth=0.2):
         pl.plot([sconfig[0], econfig[0]],
