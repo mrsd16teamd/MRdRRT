@@ -2,13 +2,16 @@ Question for Oren: if local_connector with ordering is done for each edge, and
 some edges require a certain order of movements to be collision-free, do we save
 the orderings in the edge?
 
-	- Clean up code!!!
+        - Fix oracle: check collision along qnear and node closest to qrand 
+        - Implement some kind of visualization with movement - step thru each step? 
+	- Clean up code! Make sure everything is in the right place
+        - Implement local connector with ordering
 
-	- Replace nearest neighbors checks in Graph with FLANN
+
+	- Replace nearest neighbors checks with FLANN
 
 	- Add some notion of a robot?
 	- Replace collision checking in environment with FCL
 
-
 Notes
-- We are assuming known map right now, constructed in SimpleEnvironment.InitMap
+- We are assuming known map right now, constructed in SimpleEnvironment.InitMap()
