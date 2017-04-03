@@ -36,6 +36,9 @@ class MRdRRTPlanner(object):
             if(dist<min_dist):
                 min_dist = dist
                 nearest = node
+
+        #TODO check collision between qnear and nearest node
+
         return nearest
 
     def Expand(self):
