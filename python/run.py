@@ -23,12 +23,9 @@ if __name__ == "__main__":
     gconfigs = np.array([ [40,-30], [0, 20] ])
 
     # Test 3 robots
-    # mrdrrt = MRdRRTPlanner(prm, 3, visualize=False)
+    # mrdrrt = MRdRRTPlanner(prm, 3, visualize=True)
     # sconfigs = np.array([ [30,5], [5,30], [30, 30]])
     # gconfigs = np.array([ [-30,5], [5,-30], [30, -20] ])
-
-    # import IPython
-    # IPython.embed()
 
     path = mrdrrt.FindPath(sconfigs, gconfigs)
 

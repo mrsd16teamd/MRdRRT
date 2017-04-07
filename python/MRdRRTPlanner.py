@@ -20,10 +20,10 @@ class MRdRRTPlanner(object):
         self.implicitgraph = ImplicitGraph(self.env, prm, n_robots)
         self.tree = Tree(self.env, self.implicitgraph)  # Tree that grows from starting configuration
         self.max_iter = 1000
-        self.prm = prm #Here just for VisualizePlot
+        self.prm = prm  # Here just for VisualizePlot
         self.visualize = visualize
 
-    def Oracle(self,qnear,qrand):
+    def Oracle(self, qnear, qrand):
         """
         Given randomly sampled comp config and nearest config on current tree,
         return qnew, a neighbor of qnear on the implicit graph that hasn't been
@@ -36,11 +36,11 @@ class MRdRRTPlanner(object):
         for node in neighbors:
             config = self.implicitgraph.NodeIdsToConfigs(node)
             dist = self.implicitgraph.ComputeCompositeDistance(config, qrand)
-            if(dist<min_dist):
+            if(dist < min_dist):
                 min_dist = dist
                 nearest = node
 
-        #TODO check collision between qnear and nearest node
+        # TODO check collision between qnear and nearest node
 
         return nearest
 
@@ -49,12 +49,12 @@ class MRdRRTPlanner(object):
         Takes random sample and tries to expand tree in direction of sample.
         """
         qrand = self.implicitgraph.RandomSample()
-        qnear, near_id = self.tree.NearestNeighbors(qrand,1)
+        qnear, near_id = self.tree.NearestNeighbors(qrand, 1)
 
-        qnew  = self.Oracle(qnear, qrand)
+        qnew = self.Oracle(qnear, qrand)
         if qnew not in self.tree.vertices:
             new_id = self.tree.AddVertex(qnew)
-            self.tree.AddEdge(near_id,new_id)
+            self.tree.AddEdge(near_id, new_id)
 
     def LocalConnector(self, config1, config2):
         """
@@ -74,11 +74,11 @@ class MRdRRTPlanner(object):
             q = config1 + (config2-config1)*step
             collision = self.env.CheckCollisionMultiple(q)
             if collision:
-                return False #couldn't connect
+                return False  # couldn't connect
 
-        return True #Connection succeeded!
+        return True  # Connection succeeded!
 
-    def ConnectToTarget(self,gids):
+    def ConnectToTarget(self, gids):
         """
         Called at the end of each iteration.
         Check if it's possible to get to goal from closest nodes in current tree.
@@ -87,12 +87,12 @@ class MRdRRTPlanner(object):
         # Only checking closest node right now because that's all nearestneighbors does
         # for q in self.tree.NearestNeighbors(goal,1):
         g_config = self.implicitgraph.NodeIdsToConfigs(gids)
-        neighbor, nid = self.tree.NearestNeighbors(g_config,1)
+        neighbor, nid = self.tree.NearestNeighbors(g_config, 1)
         n_config = self.implicitgraph.NodeIdsToConfigs(neighbor)
-        success = self.LocalConnector(n_config,g_config)
+        success = self.LocalConnector(n_config, g_config)
         return success, nid
 
-    def ConstructPath(self,neighbor_of_goal,sconfigs, gconfigs, sids, gids):
+    def ConstructPath(self, neighbor_of_goal, sconfigs, gconfigs, sids, gids):
         """
         Called when a collision-free path to goal config is found.
         Returns final path thru implicit graph to get from start to goal.
@@ -103,9 +103,9 @@ class MRdRRTPlanner(object):
         path = [gconfigs]
         path.append(self.implicitgraph.NodeIdsToConfigs(gids))
 
-        #Follow pointers to parents from goal to reconstruct path, reverse
+        # Follow pointers to parents from goal to reconstruct path, reverse
         node_id = neighbor_of_goal
-        while (node_id in self.tree.edges.keys()):    #TODO find better end condition
+        while (node_id in self.tree.edges.keys()):    # TODO find better end condition
             node = self.tree.vertices[node_id]
             path.append(self.implicitgraph.NodeIdsToConfigs(node))
             node_id = self.tree.edges[node_id]
@@ -116,7 +116,7 @@ class MRdRRTPlanner(object):
         return path
 
     def VisualizePath(self, path):
-        colors = ['k-','y-','g-']
+        colors = ['k-', 'y-', 'g-']
 
         if not pl.get_fignums():
             self.env.InitializePlot()
@@ -124,8 +124,8 @@ class MRdRRTPlanner(object):
         for robot in range(len(path[0])):
             robot_path = []
             for i in range(len(path)):
-                robot_path.append(path[i][robot,:])
-            self.prm.VisualizePath(robot_path,colors[robot])
+                robot_path.append(path[i][robot, :])
+            self.prm.VisualizePath(robot_path, colors[robot])
         raw_input("Check paths")
 
     def FindPath(self, sconfigs, gconfigs):
@@ -140,7 +140,7 @@ class MRdRRTPlanner(object):
         self.tree.AddVertex(sids)
 
         i = 0
-        while (i<self.max_iter):
+        while (i < self.max_iter):
             self.Expand()
             success, nid = self.ConnectToTarget(gids)
             if success:
@@ -149,13 +149,14 @@ class MRdRRTPlanner(object):
                 break
 
             i += 1
-            if(i%100 ==0):
+            if(i % 100 ==0):
                 print(i)
 
-        if self.visualize:
-            self.VisualizePath(path)
-
-
+        if (i == self.max_iter):
+            print("Failed to find path - hit maximum iterations.")
+        else:
+            if self.visualize:
+                self.VisualizePath(path)
 
 
         # #DEBUG STUFF
