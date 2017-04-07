@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import argparse, time
+import argparse
+import time
 import numpy as np
 import sys
 from sys import platform
