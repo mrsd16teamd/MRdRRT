@@ -11,10 +11,11 @@ class PRMPlanner(object):
         self.graph = Graph(self.env)
         self.N = N
         self.visualize = visualize
-        if load:
-            self.LoadRoadmap()
         if self.visualize:
             self.env.InitializePlot()
+        if load:
+            self.LoadRoadmap()
+
 
     def GenerateRoadmap(self):
         while (len(self.graph.vertices) < self.N):
@@ -42,6 +43,8 @@ class PRMPlanner(object):
         prm_graph = pickle.load( open(filepath, 'rb') )
         self.graph.vertices = prm_graph['vertices']
         self.graph.edges = prm_graph['edges']
+        if self.visualize==True:
+			self.PlotRoadmap()
 
     def PlotRoadmap(self):
         print("Plotting roadmap..")

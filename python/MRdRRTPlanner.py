@@ -1,4 +1,6 @@
 import numpy as np
+import pylab as pl
+
 from Graph import Graph
 from SimpleEnvironment import SimpleEnvironment
 from PRMPlanner import PRMPlanner
@@ -19,6 +21,7 @@ class MRdRRTPlanner(object):
         self.tree = Tree(self.env, self.implicitgraph)  # Tree that grows from starting configuration
         self.max_iter = 1000
         self.prm = prm #Here just for VisualizePlot
+        self.visualize = visualize
 
     def Oracle(self,qnear,qrand):
         """
@@ -114,8 +117,10 @@ class MRdRRTPlanner(object):
 
     def VisualizePath(self, path):
         colors = ['k-','y-','g-']
-        self.env.InitializePlot()
-        self.prm.PlotRoadmap()
+
+        if not pl.get_fignums():
+            self.env.InitializePlot()
+            self.prm.PlotRoadmap()
         for robot in range(len(path[0])):
             robot_path = []
             for i in range(len(path)):
@@ -147,8 +152,8 @@ class MRdRRTPlanner(object):
             if(i%100 ==0):
                 print(i)
 
-        #TODO reconstruct path and add start, goal configs
-        self.VisualizePath(path)
+        if self.visualize:
+            self.VisualizePath(path)
 
 
 
