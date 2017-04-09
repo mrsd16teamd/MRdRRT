@@ -1,6 +1,6 @@
 import numpy as np
-from Graph import Graph
-from SimpleEnvironment import SimpleEnvironment
+from prm_graph import Graph
+from simple_environment import SimpleEnvironment
 import time
 import cPickle as pickle
 

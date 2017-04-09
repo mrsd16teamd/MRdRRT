@@ -10,7 +10,7 @@ from nav_msgs.msg import Path
 from mrdrrt.srv import PrmSrv
 
 import numpy as np
-from PRMPlanner import PRMPlanner
+from prm_planner import PRMPlanner
 
 # This node will listen for service calls from a robot for a goal state
 # We will then find the current state of the robot, and use a PRM to

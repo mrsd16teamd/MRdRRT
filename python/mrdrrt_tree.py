@@ -2,7 +2,8 @@ import operator
 from collections import defaultdict
 import itertools
 
-#TODO adjust this for need of MRdRRT
+# TODO adjust this for needs of MRdRRT
+
 
 class Tree(object):
     """
@@ -11,7 +12,7 @@ class Tree(object):
     correspond to positions of the robots.
     """
 
-    def __init__(self, planning_env,implicit_graph):
+    def __init__(self, planning_env, implicit_graph):
         self.vertices = []      # vertices of node ids
         self.edges = dict()
         self.env = planning_env
@@ -41,7 +42,7 @@ class Tree(object):
         for vid, node in enumerate(self.vertices):
             node_config = self.implicitgraph.NodeIdsToConfigs(node)
             dist = self.implicitgraph.ComputeCompositeDistance(node_config, config)
-            if (dist<min_dist):
+            if (dist < min_dist):
                 dist = min_dist
                 nearest = node
                 nid = vid

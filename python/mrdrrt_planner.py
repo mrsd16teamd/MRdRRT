@@ -1,11 +1,12 @@
 import numpy as np
 import pylab as pl
+import time
 
-from Graph import Graph
-from SimpleEnvironment import SimpleEnvironment
-from PRMPlanner import PRMPlanner
-from Tree import Tree
-from ImplicitGraph import ImplicitGraph
+from prm_graph import Graph
+from simple_environment import SimpleEnvironment
+from prm_planner import PRMPlanner
+from mrdrrt_tree import Tree
+from implicit_graph import ImplicitGraph
 
 """
 Notes:
@@ -18,8 +19,8 @@ class MRdRRTPlanner(object):
         self.n_robots = n_robots
         self.env = prm.env
         self.implicitgraph = ImplicitGraph(self.env, prm, n_robots)
-        self.tree = Tree(self.env, self.implicitgraph)  # Tree that grows from starting configuration
-        self.max_iter = 1000
+        self.tree = Tree(self.env, self.implicitgraph)
+        self.max_iter = 3000
         self.prm = prm  # Here just for VisualizePlot
         self.visualize = visualize
 
@@ -40,7 +41,15 @@ class MRdRRTPlanner(object):
                 min_dist = dist
                 nearest = node
 
-        # TODO check collision between qnear and nearest node
+        # check collision between qnear and nearest node
+        # TODO clean this up, move somewhere else
+        if nearest:
+            nearest_config = self.implicitgraph.NodeIdsToConfigs(nearest)
+            for i in range(len(qrand)):
+                config1 = qrand[i]
+                config2 = nearest_config[i]
+                if self.env.CollisionOnLine(config1, config2):
+                    return None
 
         return nearest
 
@@ -52,7 +61,7 @@ class MRdRRTPlanner(object):
         qnear, near_id = self.tree.NearestNeighbors(qrand, 1)
 
         qnew = self.Oracle(qnear, qrand)
-        if qnew not in self.tree.vertices:
+        if (qnew is not None and qnew not in self.tree.vertices):
             new_id = self.tree.AddVertex(qnew)
             self.tree.AddEdge(near_id, new_id)
 
@@ -105,7 +114,7 @@ class MRdRRTPlanner(object):
 
         # Follow pointers to parents from goal to reconstruct path, reverse
         node_id = neighbor_of_goal
-        while (node_id in self.tree.edges.keys()):    # TODO find better end condition
+        while (node_id in self.tree.edges.keys()):  # TODO find better end condition
             node = self.tree.vertices[node_id]
             path.append(self.implicitgraph.NodeIdsToConfigs(node))
             node_id = self.tree.edges[node_id]
@@ -128,10 +137,22 @@ class MRdRRTPlanner(object):
             self.prm.VisualizePath(robot_path, colors[robot])
         raw_input("Check paths")
 
+    def AnimatePath(self, path):
+        pass
+
     def FindPath(self, sconfigs, gconfigs):
         """
         Inputs: list of start and goal configs for robots.
         """
+        # TODO check validity of start and end configs
+        if len(sconfigs) != len(gconfigs):
+            print("start and goal configurations don't match in length")
+            return
+        for i in range(len(sconfigs)):
+            if self.env.CheckCollision(sconfigs[i]) or self.env.CheckCollision(gconfigs[i]):
+                print("Start or goal configurations are in collision.")
+                return
+
         print("Looking for a path...")
         sids = self.implicitgraph.NearestNodeInGraph(sconfigs)
         gids = self.implicitgraph.NearestNodeInGraph(gconfigs)
@@ -148,29 +169,12 @@ class MRdRRTPlanner(object):
                 path = self.ConstructPath(nid, sconfigs, gconfigs, sids, gids)
                 break
 
+            if(i % 100 == 0):
+                print(str(i) + "th iteration")
             i += 1
-            if(i % 100 ==0):
-                print(i)
 
         if (i == self.max_iter):
             print("Failed to find path - hit maximum iterations.")
         else:
             if self.visualize:
                 self.VisualizePath(path)
-
-
-        # #DEBUG STUFF
-        # self.env.InitializePlot()
-        # self.prm.PlotRoadmap()
-        # self.env.PlotPoint(sconfigs[0],'g',7)
-        # self.env.PlotPoint(sconfigs[1],'g',7)
-        # self.env.PlotPoint(gconfigs[0],'y',7)
-        # self.env.PlotPoint(gconfigs[1],'y',7)
-        # s_close = self.implicitgraph.NodeIdsToConfigs(sids)
-        # g_close = self.implicitgraph.NodeIdsToConfigs(gids)
-        # self.env.PlotPoint(s_close[0],'r',7)
-        # self.env.PlotPoint(s_close[1],'r',7)
-        # self.env.PlotPoint(g_close[0],'m',7)
-        # self.env.PlotPoint(g_close[1],'m',7)
-        # raw_input("wtf")
-        # ####

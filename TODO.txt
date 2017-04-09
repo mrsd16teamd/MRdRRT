@@ -1,21 +1,20 @@
-- check for feasibility of start and goal configs
-- fix 3 robot planning
-- Fix oracle: check collision along qnear and node closest to qrand
 - animated visualization of path
 - Clean up code! Make sure everything is in the right place. go thru small todos in code
+	- move plots and animations into separate class?
+	- add asserts for preconditions. 'assert condition, "message"'
 
 - Implement local connector with ordering
+- Test tighter environments that require coordination
 
+Later
+- Replace nearest neighbors checks with FLANN
+- proper pydocs
+- Add some notion of a robot?
+- Replace collision checking in environment with FCL?
+
+Notes
+- We are assuming known map right now, constructed in SimpleEnvironment.InitMap()
 
 Question for Oren: if local_connector with ordering is done for each edge, and
 some edges require a certain order of movements to be collision-free, do we save
 the orderings in the edge?
-
-
-	- Replace nearest neighbors checks with FLANN
-
-	- Add some notion of a robot?
-	- Replace collision checking in environment with FCL?
-
-Notes
-- We are assuming known map right now, constructed in SimpleEnvironment.InitMap()
