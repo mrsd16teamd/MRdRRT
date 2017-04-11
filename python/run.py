@@ -9,7 +9,7 @@ from mrdrrt_planner import MRdRRTPlanner
 
 
 def main():
-    print("Starting MRdRRT program.")
+    print("Starting...")
     # assert 1>5, "it works!"
     prm = PRMPlanner(N=300, load=True, visualize=True)
     raw_input("check roadmap and obstacles")

@@ -8,13 +8,12 @@ from prm_planner import PRMPlanner
 from mrdrrt_tree import Tree
 from implicit_graph import ImplicitGraph
 
-"""
-Notes:
-- tree will have nodes of type np array (matrix)
-"""
-
 
 class MRdRRTPlanner(object):
+    """
+
+    """
+
     def __init__(self, prm, n_robots=2, visualize=False):
         self.n_robots = n_robots
         self.env = prm.env
@@ -25,7 +24,7 @@ class MRdRRTPlanner(object):
         self.visualize = visualize
 
     def Oracle(self, qnear, qrand):
-        """
+        """Direction oracle, as defined in Oren's paper.
         Given randomly sampled comp config and nearest config on current tree,
         return qnew, a neighbor of qnear on the implicit graph that hasn't been
         explored yet, and is closest (by sum of euclidean distances) to qnear.
@@ -54,8 +53,7 @@ class MRdRRTPlanner(object):
         return nearest
 
     def Expand(self):
-        """
-        Takes random sample and tries to expand tree in direction of sample.
+        """Takes random sample and tries to expand tree in direction of sample.
         """
         qrand = self.implicitgraph.RandomSample()
         qnear, near_id = self.tree.NearestNeighbors(qrand, 1)
@@ -66,7 +64,7 @@ class MRdRRTPlanner(object):
             self.tree.AddEdge(near_id, new_id)
 
     def LocalConnector(self, config1, config2):
-        """
+        """Check for collision free path between two composite configs.
         Given two composite configurations, check if collision free movement
         between them is possible. If coordinated movement/ordering is required,
         return ordering of robots as list.
@@ -88,10 +86,9 @@ class MRdRRTPlanner(object):
         return True  # Connection succeeded!
 
     def ConnectToTarget(self, gids):
-        """
+        """Check if it's possible to get to goal from closest nodes in current tree.
         Called at the end of each iteration.
-        Check if it's possible to get to goal from closest nodes in current tree.
-        Input: list of goal configurations
+        Input: list of goal configurations (goal composite config)
         """
         # Only checking closest node right now because that's all nearestneighbors does
         # for q in self.tree.NearestNeighbors(goal,1):
@@ -102,9 +99,8 @@ class MRdRRTPlanner(object):
         return success, nid
 
     def ConstructPath(self, neighbor_of_goal, sconfigs, gconfigs, sids, gids):
-        """
+        """Returns final path thru implicit graph to get from start to goal.
         Called when a collision-free path to goal config is found.
-        Returns final path thru implicit graph to get from start to goal.
         Inputs:
             neighbor_of_goal: (node IDs) node that was successfully connected to goal
             gconfigs: list of configurations of final goal
@@ -125,6 +121,8 @@ class MRdRRTPlanner(object):
         return path
 
     def VisualizePath(self, path):
+        """Plot paths of robots through environment, defined in path.
+        """
         colors = ['k-', 'y-', 'g-']
 
         if not pl.get_fignums():
@@ -138,10 +136,13 @@ class MRdRRTPlanner(object):
         raw_input("Check paths")
 
     def AnimatePath(self, path):
+        """Same thing as VisualizePath, except animated from start to goal.
+        Should help for noticing collisions between robots mid-path.
+        """
         pass
 
     def FindPath(self, sconfigs, gconfigs):
-        """
+        """Main function for MRdRRT. Expands tree to find path from start to goal.
         Inputs: list of start and goal configs for robots.
         """
         # TODO check validity of start and end configs

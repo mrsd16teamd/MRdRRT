@@ -1,7 +1,11 @@
+- PRM ROS node: add rotations!
+- Measure Cozmo for radius
+- Generate new PRM for defined T-map
+
 - animated visualization of path
-- Clean up code! Make sure everything is in the right place. go thru small todos in code
-	- move plots and animations into separate class?
+- Clean up code!
 	- add asserts for preconditions. 'assert condition, "message"'
+	- move plots and animations into separate class?
 
 - Implement local connector with ordering
 - Test tighter environments that require coordination

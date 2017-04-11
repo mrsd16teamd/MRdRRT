@@ -2,14 +2,12 @@ import operator
 from collections import defaultdict
 import itertools
 
-# TODO adjust this for needs of MRdRRT
-
 
 class Tree(object):
-    """
-    Tree structure, meant for use with implicit graph in MRdRRT.
+    """Tree structure, meant for use with implicit graph in MRdRRT.
     In this class, 'configuration' refers to a list of PRM node IDs, which
     correspond to positions of the robots.
+    Adjacency list representation.
     """
 
     def __init__(self, planning_env, implicit_graph):
@@ -19,18 +17,20 @@ class Tree(object):
         self.implicitgraph = implicit_graph
 
     def AddVertex(self, config):
+        """Add vertex to tree."""
         vid = len(self.vertices)
         self.vertices.append(config)
-        # self.id_vertices.append(ids)
         return vid
 
     def AddEdge(self, sid, eid):
-        # Each node points to its parent (where it came from)
+        """Add edge to tree.
+        Each node points to its parent (where it came from), which helps for
+        reconstructing path at end.
+        """
         self.edges[eid] = sid
 
     def NearestNeighbors(self, config, K):
-        """
-        Given composite configuration, find K closest ones in current tree.
+        """Given composite configuration, find K closest ones in current tree.
         """
         # TODO Actually support K nearest neighbors instead of just one
         # For now, we're just doing nearest neighbor
