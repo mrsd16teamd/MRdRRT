@@ -10,8 +10,14 @@ from implicit_graph import ImplicitGraph
 
 
 class MRdRRTPlanner(object):
-    """
+    """Multi-robot discrete RRT algorithm for coordinated centralized planning.
 
+    Simple implementation of:
+      
+    Solovey, Kiril, Oren Salzman, and Dan Halperin.
+    "Finding a needle in an exponential haystack: Discrete RRT for exploration
+    of implicit roadmaps in multi-robot motion planning." Algorithmic Foundations
+    of Robotics XI. Springer International Publishing, 2015. 591-607.
     """
 
     def __init__(self, prm, n_robots=2, visualize=False):
