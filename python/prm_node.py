@@ -30,7 +30,7 @@ class PRMPlannerNode(object):
         self.map_frame = '/world'
         self.robot_frame = '/base_link'
 
-        print("Ready to serve!.")
+        print("Ready to serve!")
 
     def PlanPath(self, request):
         """Processes service request (query for path to goal point).
