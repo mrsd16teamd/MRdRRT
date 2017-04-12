@@ -13,7 +13,7 @@ class MRdRRTPlanner(object):
     """Multi-robot discrete RRT algorithm for coordinated centralized planning.
 
     Simple implementation of:
-      
+
     Solovey, Kiril, Oren Salzman, and Dan Halperin.
     "Finding a needle in an exponential haystack: Discrete RRT for exploration
     of implicit roadmaps in multi-robot motion planning." Algorithmic Foundations
@@ -129,7 +129,7 @@ class MRdRRTPlanner(object):
     def VisualizePath(self, path):
         """Plot paths of robots through environment, defined in path.
         """
-        colors = ['k-', 'y-', 'g-']
+        colors = ['r-', 'g-', 'b-', 'm-', 'y-']
 
         if not pl.get_fignums():
             self.env.InitializePlot()
@@ -141,6 +141,12 @@ class MRdRRTPlanner(object):
             self.prm.VisualizePath(robot_path, colors[robot])
         raw_input("Check paths")
 
+    def ShowStartAndGoalConfigs(self, sconfigs, gconfigs):
+        colors = ['r', 'g', 'b', 'm', 'y']
+        for i in range(len(sconfigs)):
+            self.env.PlotPoint(sconfigs[i], color=colors[i], size=10)
+            self.env.PlotPoint(gconfigs[i], color=colors[i], size=10)
+
     def AnimatePath(self, path):
         """Same thing as VisualizePath, except animated from start to goal.
         Should help for noticing collisions between robots mid-path.
@@ -151,10 +157,13 @@ class MRdRRTPlanner(object):
         """Main function for MRdRRT. Expands tree to find path from start to goal.
         Inputs: list of start and goal configs for robots.
         """
-        # TODO check validity of start and end configs
         if len(sconfigs) != len(gconfigs):
-            print("start and goal configurations don't match in length")
+            print("Start and goal configurations don't match in length")
             return
+
+        self.ShowStartAndGoalConfigs(sconfigs, gconfigs)
+        raw_input("Hit enter to start planning")
+
         for i in range(len(sconfigs)):
             if self.env.CheckCollision(sconfigs[i]) or self.env.CheckCollision(gconfigs[i]):
                 print("Start or goal configurations are in collision.")
@@ -176,7 +185,7 @@ class MRdRRTPlanner(object):
                 path = self.ConstructPath(nid, sconfigs, gconfigs, sids, gids)
                 break
 
-            if(i % 100 == 0):
+            if(i % 10 == 0):
                 print(str(i) + "th iteration")
             i += 1
 

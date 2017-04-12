@@ -11,7 +11,7 @@ class PRMPlanner(object):
     Can either generate a new roadmap or load a saved one.
     """
 
-    def __init__(self, N=300, load=True, visualize=False, filepath=None):
+    def __init__(self, N=300, load=True, visualize=False, filepath='t_map_prm.p'):
         self.env = SimpleEnvironment(visualize)
         self.graph = Graph(self.env)
         self.N = N
@@ -19,10 +19,15 @@ class PRMPlanner(object):
         if self.visualize:
             self.env.InitializePlot()
         if load:
-            self.LoadRoadmap()
+            self.LoadRoadmap(filepath)
+        else:
+            raw_input("Hit enter to generate and save new roadmap.")
+            self.GenerateRoadmap()
+            self.SaveRoadmap()
 
     def GenerateRoadmap(self):
         """Standard PRM algorithm."""
+        print("Generating roadmap...")
         while (len(self.graph.vertices) < self.N):
             # Generate random sample, check that's in Cfree
             qnew = self.env.SampleConfig()
@@ -42,11 +47,11 @@ class PRMPlanner(object):
         prm_graph = dict()
         prm_graph['vertices'] = self.graph.vertices
         prm_graph['edges'] = self.graph.edges
-        with open("prm_save.p", "wb") as f:
+        with open("t_map_prm.p", "wb") as f:
             pickle.dump(prm_graph, f)
             print("Saved roadmap.")
 
-    def LoadRoadmap(self, filepath='prm_save.p'):
+    def LoadRoadmap(self, filepath):
         """Loads pickle with pre-made roadmap."""
         print("Loading roadmap.")
         with open(filepath, 'rb') as f:

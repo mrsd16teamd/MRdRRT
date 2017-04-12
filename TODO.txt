@@ -1,8 +1,8 @@
 - PRM ROS node: add rotations!
 - Measure Cozmo for radius
-- Generate new PRM for defined T-map
-
+- add timing, profiling
 - animated visualization of path
+
 - Clean up code!
 	- add asserts for preconditions. 'assert condition, "message"'
 	- move plots and animations into separate class?

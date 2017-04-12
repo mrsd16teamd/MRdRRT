@@ -97,10 +97,9 @@ class SimpleEnvironment(object):
         # self.obstacles.append(cube1)
 
         # T MAP. Assume these are already expanded
-        box1 = np.array([ [-50,-50], [-50,-40], [50,-40], [50,-50] ])
-        box2 = np.array([ [-50,-20], [-50,50], [-10,50], [-10,-20] ])
-		# box2 = np.array([ [-50,-30], [-50,50], [-10,50], [-10,-30] ])
-        box3 = np.array([  [20,-20], [20,50], [50,50], [50, -20] ])
+        box1 = np.array([[-50-50], [-50, -40], [50, -40], [50, -50]])
+        box2 = np.array([[-50-25], [-50, 50], [-10, 50], [-10, -25]])
+        box3 = np.array([[20-25], [20, 50], [50, 50], [50, -25]])
         self.obstacles.append(box1)
         self.obstacles.append(box2)
         self.obstacles.append(box3)
