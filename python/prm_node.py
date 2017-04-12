@@ -65,7 +65,7 @@ class PRMPlannerNode(object):
                 pose = PoseStamped()
                 pose.pose.position.x = config[0]
                 pose.pose.position.y = config[1]
-                
+
                 # TODO test this
                 yaw = config[2]
                 quat = tf.transformations.quaternion_from_euler(0, 0, yaw)
@@ -74,6 +74,7 @@ class PRMPlannerNode(object):
                 pose.pose.orientation.z = quat[2]
                 pose.pose.orientation.w = quat[3]
                 pub_path.append(pose)
+                print "Path: ", config, ' q: ', quat
 
             plan_msg.poses = pub_path
             self.plan_pub.publish(plan_msg)
