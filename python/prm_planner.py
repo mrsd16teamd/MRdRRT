@@ -105,7 +105,7 @@ class PRMPlanner(object):
         """
         sid = self.graph.GetNearestNode(sconfig[0:2])
         gid = self.graph.GetNearestNode(gconfig[0:2])
-        start_angle = sconfig[0]
+        start_angle = sconfig[2]
         goal_angle = gconfig[2]
 
         point_path = self.graph.Djikstra(sid, gid)

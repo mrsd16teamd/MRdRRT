@@ -37,16 +37,17 @@ class PRMPlannerNode(object):
         Path is published in nav_msgs/Path type.
         """
         print("Starting PlanPath.")
-        goal_config = np.array([request.goal_pose.x, request.goal_pose.y])
+        goal_config = np.array([request.goal_pose.x, request.goal_pose.y, request.goal_pose.theta])
 
         try:
             # (trans,rot) = self.tf_listener.lookupTransform(self.map_frame, self.robot_frame, rospy.Time(0))
             trans = [-30, -30]
+            yaw = 0.1
         except:
             print("Couldn't get transform between " + self.map_frame + " and " + self.robot_frame)
             return False
 
-        start_config = np.array([trans[0], trans[1]])
+        start_config = np.array([trans[0], trans[1], yaw])
 
         prm_path = self.prm.FindPath(start_config, goal_config)
 
@@ -65,7 +66,7 @@ class PRMPlannerNode(object):
                 pose = PoseStamped()
                 pose.pose.position.x = config[0]
                 pose.pose.position.y = config[1]
-                
+
                 # TODO test this
                 yaw = config[2]
                 quat = tf.transformations.quaternion_from_euler(0, 0, yaw)
