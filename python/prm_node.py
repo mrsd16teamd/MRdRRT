@@ -21,7 +21,7 @@ class PRMPlannerNode(object):
 
     def __init__(self):
         """ Initializes its own PRM roadmap. Assume map matches real life"""
-        self.prm = PRMPlanner(N=300, load=True, visualize=False, filepath='/home/kazu/cozmo_ws/src/MRdRRT/python/prm_save.p')
+        self.prm = PRMPlanner(N=1000, load=True, visualize=False, filepath='/home/kazu/cozmo_ws/src/MRdRRT/python/prm_save.p')
         self.tf_listener = tf.TransformListener()
 
         self.plan_pub = rospy.Publisher('prm_path', Path, queue_size=1)
@@ -65,6 +65,14 @@ class PRMPlannerNode(object):
                 pose = PoseStamped()
                 pose.pose.position.x = config[0]
                 pose.pose.position.y = config[1]
+                
+                # TODO test this
+                yaw = config[2]
+                quat = tf.transformations.quaternion_from_euler(0, 0, yaw)
+                pose.pose.orientation.x = quat[0]
+                pose.pose.orientation.y = quat[1]
+                pose.pose.orientation.z = quat[2]
+                pose.pose.orientation.w = quat[3]
                 pub_path.append(pose)
 
             plan_msg.poses = pub_path

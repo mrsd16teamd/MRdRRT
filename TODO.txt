@@ -1,7 +1,8 @@
-- PRM ROS node: add rotations!
+- PRM ROS node: test with rotations. Just send service calls
 - Measure Cozmo for radius
-- add timing, profiling
 - animated visualization of path
+
+- try timing, profiling
 
 - Clean up code!
 	- add asserts for preconditions. 'assert condition, "message"'
