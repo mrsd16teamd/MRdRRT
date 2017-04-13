@@ -4,7 +4,6 @@ from prm_graph import Graph
 import numpy as np
 import time
 import cPickle as pickle
-from sys import platform as _platform
 
 
 class PRMPlanner(object):

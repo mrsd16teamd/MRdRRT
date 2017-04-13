@@ -1,11 +1,10 @@
 Immediate to-dos:
-	-
-	- generate saved roadmaps for all maps, then automate choosing at run.py level for simpleenvironment, prm_planner
 	- Make FindClosestToConfig faster!
-		- replace with FLANN
-			- currently iterates thru all neighbors linearly to find closest point
+	- replace with FLANN
+		- currently iterates thru all neighbors linearly to find closest point
 
 Next up:
+	- figure out plotting issues on linux
 	- animated visualization of path
 	- Implement local connector with ordering - prototype separately first
 	- Decide on final environment design

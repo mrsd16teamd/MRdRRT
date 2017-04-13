@@ -2,6 +2,7 @@ import numpy as np
 import pylab as pl
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
+from sys import platform as _platform
 
 
 class SimpleEnvironment(object):
@@ -145,8 +146,10 @@ class SimpleEnvironment(object):
 
         # self.PlotPolygons(self.obs_unexpanded, color='y')
         self.PlotPolygons(self.obstacles, color='b')
-        pl.ion()
-        pl.show()
+        if _platform == 'darwin':
+            pl.ion()
+            pl.show()
+
 
     def PlotEdge(self, sconfig, econfig, color='k--', lwidth=0.2):
         """Plot edge between two points on map."""

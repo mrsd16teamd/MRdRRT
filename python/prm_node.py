@@ -32,11 +32,9 @@ class PRMPlannerNode(object):
             filename = 'cube_center.p'
         elif map_id == 2:
             filename = 't_map_prm.p'
-
-        print(path)
         map_path = path + '/roadmaps/' + filename
 
-        self.prm = PRMPlanner(N=1000, map_id=map_id, load=True, visualize=False, filepath = map_path)
+        self.prm = PRMPlanner(n_nodes=1000, map_id=map_id, load=True, visualize=False, filepath = map_path)
         self.tf_listener = tf.TransformListener()
 
         self.plan_pub = rospy.Publisher('prm_path', Path, queue_size=1)
@@ -45,7 +43,7 @@ class PRMPlannerNode(object):
         self.map_frame = 'world'
         self.robot_frame = 'base_link'
 
-        print("Ready to serve!")
+        print("Ready to serve! Call prm_plan service with goal pose.")
 
     def PlanPath(self, request):
         """Processes service request (query for path to goal point).
@@ -55,8 +53,8 @@ class PRMPlannerNode(object):
         goal_config = np.array([request.goal_pose.x, request.goal_pose.y, request.goal_pose.theta])
 
         try:
-            # (trans,rot) = self.tf_listener.lookupTransform(self.map_frame, self.robot_frame, rospy.Time(0))
-            trans = [-30, -30]
+            (trans,rot) = self.tf_listener.lookupTransform(self.map_frame, self.robot_frame, rospy.Time(0))
+            # trans = [-30, -30]
             yaw = 0.1
         except:
             print("Couldn't get transform between " + self.map_frame + " and " + self.robot_frame)
@@ -90,7 +88,7 @@ class PRMPlannerNode(object):
                 pose.pose.orientation.z = quat[2]
                 pose.pose.orientation.w = quat[3]
                 pub_path.append(pose)
-                print "Path: ", config, ' q: ', quat
+                print "Path: ", config
 
             plan_msg.poses = pub_path
             self.plan_pub.publish(plan_msg)
