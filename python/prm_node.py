@@ -54,11 +54,14 @@ class PRMPlannerNode(object):
 
         try:
             (trans,rot) = self.tf_listener.lookupTransform(self.map_frame, self.robot_frame, rospy.Time(0))
+            eul = tf.transformations.euler_from_quaternion(rot)
+            yaw = eul[2]
             # trans = [-30, -30]
-            yaw = 0.1
+            # yaw = 0.1
         except:
             print("Couldn't get transform between " + self.map_frame + " and " + self.robot_frame)
             return False
+
 
         start_config = np.array([trans[0], trans[1], yaw])
 
@@ -75,6 +78,7 @@ class PRMPlannerNode(object):
             plan_msg.header = h
 
             pub_path = []
+            print("Path: ")
             for config in prm_path:
                 pose = PoseStamped()
                 pose.pose.position.x = config[0]
@@ -88,7 +92,7 @@ class PRMPlannerNode(object):
                 pose.pose.orientation.z = quat[2]
                 pose.pose.orientation.w = quat[3]
                 pub_path.append(pose)
-                print "Path: ", config
+                print(config)
 
             plan_msg.poses = pub_path
             self.plan_pub.publish(plan_msg)
