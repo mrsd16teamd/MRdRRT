@@ -14,7 +14,7 @@ def main():
     print("Starting...")
     prm = PRMPlanner(N=1000, load=True, visualize=True)
 
-    test = 5
+    test = 3
 
     if test == 1:
         # Test 2 robots

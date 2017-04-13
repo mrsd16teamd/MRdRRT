@@ -1,6 +1,4 @@
 Immediate to-dos:
-	- PRM ROS node: test with rotations. Just send service calls
-	- Measure Cozmo for radius
 	- Make FindClosestToConfig faster!
 		- currently iterates thru all neighbors linearly to find closest point
 		- replace with FLANN

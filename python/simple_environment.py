@@ -18,7 +18,8 @@ class SimpleEnvironment(object):
 
         # TODO add robots
         self.robots = []
-        self.robot_radius = 5  # [cm]
+        self.robot_radius = 5.25  # [cm]
+        self.cube_width = 4.5
 
         self.InitMap()
 
@@ -106,20 +107,19 @@ class SimpleEnvironment(object):
 
         # EMPTY MAP
         # define vertices - make sure they're in order
-        # cube_width = 5  # [cm]
-        # w = cube_width + self.robot_radius
-        # cube1 = np.array([[0,0],[w, 0],[w, w], [0, w]])
-        # self.obstacles.append(cube1)
+        w = self.cube_width  # [cm]
+        cube1 = np.array([[0,0], [w, 0], [w, w], [0, w]])
+        self.obstacles.append(self.ExpandObstacle(cube1))
 
         # T MAP. Assume these are already expanded
-        box1 = np.array([[-45, -45], [45, -45], [45, -45], [-45, -45]])
-        box2 = np.array([[-45, -20], [-15, -20], [-15, 45], [-45, 45]])
-        box3 = np.array([[25, -20], [45, -20], [45, 45], [25, 45]])
-        self.obs_unexpanded = [box1, box2, box3]
+        # box1 = np.array([[-45, -45], [45, -45], [45, -45], [-45, -45]])
+        # box2 = np.array([[-45, -20], [-15, -20], [-15, 45], [-45, 45]])
+        # box3 = np.array([[25, -20], [45, -20], [45, 45], [25, 45]])
+        # self.obs_unexpanded = [box1, box2, box3]
 
-        self.obstacles.append(self.ExpandObstacle(box1))
-        self.obstacles.append(self.ExpandObstacle(box2))
-        self.obstacles.append(self.ExpandObstacle(box3))
+        # self.obstacles.append(self.ExpandObstacle(box1))
+        # self.obstacles.append(self.ExpandObstacle(box2))
+        # self.obstacles.append(self.ExpandObstacle(box3))
 
     def PlotPolygons(self, polygons, color='b'):
         """Plots polygons on map.
