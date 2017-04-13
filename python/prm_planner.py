@@ -21,9 +21,9 @@ class PRMPlanner(object):
         if self.visualize:
             self.env.InitializePlot()
         if load:
-            if map_id == 1 and filepath is not None:
+            if map_id == 1 and filepath is None:
                 filepath = '../roadmaps/cube_center.p'
-            if map_id == 2 and filepath is not None:
+            if map_id == 2 and filepath is None:
                 filepath = '../roadmaps/t_map_prm.p'
             self.LoadRoadmap(filepath)
         else:
