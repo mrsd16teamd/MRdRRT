@@ -60,6 +60,7 @@ class PRMPlanner(object):
             self.graph.edges = prm_graph['edges']
             if self.visualize:
                 self.PlotRoadmap()
+                raw_input("Wait for plot and check roadmap.")
 
     def PlotRoadmap(self):
         """Plots roadmap's nodes and edges.

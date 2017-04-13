@@ -13,7 +13,6 @@ from mrdrrt_planner import MRdRRTPlanner
 def main():
     print("Starting...")
     prm = PRMPlanner(N=1000, load=True, visualize=True)
-    raw_input("Wait for plot to pop up, if visualize is on.")
 
     test = 5
 

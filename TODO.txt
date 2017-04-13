@@ -1,30 +1,32 @@
-- PRM ROS node: test with rotations. Just send service calls
-- Measure Cozmo for radius
-- animated visualization of path
+Immediate to-dos:
+	- PRM ROS node: test with rotations. Just send service calls
+	- Measure Cozmo for radius
+	- Make FindClosestToConfig faster!
+		- currently iterates thru all neighbors linearly to find closest point
+		- replace with FLANN
 
-- try timing, profiling
+Next up:
+	- animated visualization of path
+	- Implement local connector with ordering - prototype separately first
+	- Decide on final environment design
+	- Clean up code!
+		- add asserts for preconditions. 'assert condition, "message"'
+		- move plots and animations into separate class?
 
-Most expensive function right now is oracle, which includes getneighbors which
-constructs all possible combinations of neighbors, and iterates thru them linearly
-to find closest point
 
-Also, some nodes in PRM end up getting more neighbors because current code searches
+Issues:
+- Some nodes in PRM end up getting more neighbors because current code searches
 thru nodes linearly for neighbors within a certain distance when connecting. This
-could also be addressed with a proper nearest neighbors libary, or randomization.
+could also be addressed with a proper nearest neighbors library, or randomization.
 
-- Clean up code!
-	- add asserts for preconditions. 'assert condition, "message"'
-	- move plots and animations into separate class?
 
-- Implement local connector with ordering
-- Test tighter environments that require coordination
-
+-----------------------------
 Later
-- Replace nearest neighbors checks with FLANN
-- proper pydocs
+- plot original obstacles, overlayed with expanded
 - Add some notion of a robot?
 - Replace collision checking in environment with FCL?
 
+----------------------------
 Notes
 - We are assuming known map right now, constructed in SimpleEnvironment.InitMap()
 

@@ -1,5 +1,6 @@
 import numpy as np
 import pylab as pl
+import time
 
 from prm_graph import Graph
 from simple_environment import SimpleEnvironment
@@ -176,7 +177,7 @@ class MRdRRTPlanner(object):
             return
 
         self.ShowStartAndGoalConfigs(sconfigs, gconfigs)
-        raw_input("Hit enter to start planning")
+        raw_input("Wait for start/goal configs, and enter to start planning")
 
         for i in range(len(sconfigs)):
             if self.env.CheckCollision(sconfigs[i]) or self.env.CheckCollision(gconfigs[i]):

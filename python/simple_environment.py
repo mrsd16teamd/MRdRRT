@@ -83,36 +83,53 @@ class SimpleEnvironment(object):
         return False
 
     ############## Plotting stuff #################
+    def ExpandObstacle(self, obs):
+        """Expand obstacle boundary by robot radius.
+        Assumes format of: [bottom left, bottom right, top right, top left]
+        """
+        r = self.robot_radius
+        obs[0][0] -= r
+        obs[0][1] -= r
+        obs[1][0] += r
+        obs[1][1] -= r
+        obs[2][0] += r
+        obs[2][1] += r
+        obs[3][0] -= r
+        obs[3][1] += r
+        return obs
+
     def InitMap(self):
         """Add all obstacles in env.
         Obstacles are currently defined here as polygons.
         """
         self.obstacles = []
-        cube_width = 5  # [cm]
-        w = cube_width + self.robot_radius
 
         # EMPTY MAP
         # define vertices - make sure they're in order
+        # cube_width = 5  # [cm]
+        # w = cube_width + self.robot_radius
         # cube1 = np.array([[0,0],[w, 0],[w, w], [0, w]])
         # self.obstacles.append(cube1)
 
         # T MAP. Assume these are already expanded
-        box1 = np.array([[-50, -50], [-50, -40], [50, -40], [50, -50]])
-        box2 = np.array([[-50, -25], [-50, 50], [-10, 50], [-10, -25]])
-        box3 = np.array([[20, -25], [20, 50], [50, 50], [50, -25]])
-        self.obstacles.append(box1)
-        self.obstacles.append(box2)
-        self.obstacles.append(box3)
+        box1 = np.array([[-45, -45], [45, -45], [45, -45], [-45, -45]])
+        box2 = np.array([[-45, -20], [-15, -20], [-15, 45], [-45, 45]])
+        box3 = np.array([[25, -20], [45, -20], [45, 45], [25, 45]])
+        self.obs_unexpanded = [box1, box2, box3]
 
-    def PlotPolygons(self, polygons):
+        self.obstacles.append(self.ExpandObstacle(box1))
+        self.obstacles.append(self.ExpandObstacle(box2))
+        self.obstacles.append(self.ExpandObstacle(box3))
+
+    def PlotPolygons(self, polygons, color='b'):
         """Plots polygons on map.
         Assume each polygon is numpy array of vertices.
         """
         patches = []
         for i in range(len(polygons)):
-            polygon = Polygon(polygons[i], True)
+            polygon = Polygon(polygons[i], True, facecolor=color)
             patches.append(polygon)
-        p = PatchCollection(patches, alpha=0.4)
+        p = PatchCollection(patches, alpha=0.4, match_original=True)
         self.ax.add_collection(p)
 
     def InitializePlot(self):
@@ -121,7 +138,8 @@ class SimpleEnvironment(object):
         pl.xlim([self.lower_limits[0], self.upper_limits[0]])
         pl.ylim([self.lower_limits[1], self.upper_limits[1]])
 
-        self.PlotPolygons(self.obstacles)
+        # self.PlotPolygons(self.obs_unexpanded, color='y')
+        self.PlotPolygons(self.obstacles, color='b')
         pl.ion()
         pl.show()
 
