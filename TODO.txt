@@ -4,6 +4,14 @@
 
 - try timing, profiling
 
+Most expensive function right now is oracle, which includes getneighbors which
+constructs all possible combinations of neighbors, and iterates thru them linearly
+to find closest point
+
+Also, some nodes in PRM end up getting more neighbors because current code searches
+thru nodes linearly for neighbors within a certain distance when connecting. This
+could also be addressed with a proper nearest neighbors libary, or randomization.
+
 - Clean up code!
 	- add asserts for preconditions. 'assert condition, "message"'
 	- move plots and animations into separate class?

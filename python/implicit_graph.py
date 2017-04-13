@@ -4,7 +4,8 @@ from prm_graph import Graph
 
 import numpy as np
 import itertools
-
+import random
+from profile_utils import timefunc
 
 class ImplicitGraph(object):
     """Defines implicit graph (composite of PRM roadmaps) for MRdRRT."""
@@ -48,6 +49,7 @@ class ImplicitGraph(object):
             nearest.append(self.roadmap.GetNearestNode(config[i]))
         return nearest
 
+    @timefunc
     def GetNeighbors(self, node):
         """Returns list of neighbors for node in implicit graph.
         Input: node as set of IDs for each PRM (list)
@@ -56,11 +58,12 @@ class ImplicitGraph(object):
         neighbors_of_each = []  # list of lists
         for i in range(len(node)):
             neighbors_of_each.append(self.roadmap.edges[node[i]])
+            # TODO remove this hack that's here to make things faster
+            # Without this, number of neighbors gets to order of 10e6 with 4 robots
+            if len(neighbors_of_each[i]) > 10:
+                neighbors_of_each[i] = random.sample(neighbors_of_each[i], 10)
 
         # Return all possible combinations of neighbors
         neighbors = list(itertools.product(*neighbors_of_each))
-        return neighbors
 
-    def GetPathFromTree(self):
-        # TODO
-        pass
+        return neighbors

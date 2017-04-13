@@ -1,12 +1,13 @@
 import numpy as np
 import pylab as pl
-import time
 
 from prm_graph import Graph
 from simple_environment import SimpleEnvironment
 from prm_planner import PRMPlanner
 from mrdrrt_tree import Tree
 from implicit_graph import ImplicitGraph
+
+from profile_utils import timefunc
 
 
 class MRdRRTPlanner(object):
@@ -25,10 +26,25 @@ class MRdRRTPlanner(object):
         self.env = prm.env
         self.implicitgraph = ImplicitGraph(self.env, prm, n_robots)
         self.tree = Tree(self.env, self.implicitgraph)
-        self.max_iter = 3000
+        self.max_iter = 500
         self.prm = prm  # Here just for VisualizePlot
         self.visualize = visualize
 
+    @timefunc
+    def FindClosestToConfig(self, config1, neighbors):
+        min_dist = float("inf")
+        nearest = None
+
+        for node in neighbors:
+            config2 = self.implicitgraph.NodeIdsToConfigs(node)
+            dist = self.implicitgraph.ComputeCompositeDistance(config2, config1)
+            if(dist < min_dist):
+                min_dist = dist
+                nearest = node
+
+        return min_dist, nearest
+
+    @timefunc
     def Oracle(self, qnear, qrand):
         """Direction oracle, as defined in Oren's paper.
         Given randomly sampled comp config and nearest config on current tree,
@@ -37,14 +53,7 @@ class MRdRRTPlanner(object):
         """
         neighbors = self.implicitgraph.GetNeighbors(qnear)
 
-        min_dist = float("inf")
-        nearest = None
-        for node in neighbors:
-            config = self.implicitgraph.NodeIdsToConfigs(node)
-            dist = self.implicitgraph.ComputeCompositeDistance(config, qrand)
-            if(dist < min_dist):
-                min_dist = dist
-                nearest = node
+        min_dist, nearest = self.FindClosestToConfig(qrand, neighbors)
 
         # check collision between qnear and nearest node
         # TODO clean this up, move somewhere else
@@ -58,6 +67,7 @@ class MRdRRTPlanner(object):
 
         return nearest
 
+    @timefunc
     def Expand(self):
         """Takes random sample and tries to expand tree in direction of sample.
         """
@@ -69,6 +79,7 @@ class MRdRRTPlanner(object):
             new_id = self.tree.AddVertex(qnew)
             self.tree.AddEdge(near_id, new_id)
 
+    @timefunc
     def LocalConnector(self, config1, config2):
         """Check for collision free path between two composite configs.
         Given two composite configurations, check if collision free movement
@@ -91,11 +102,14 @@ class MRdRRTPlanner(object):
 
         return True  # Connection succeeded!
 
+    @timefunc
     def ConnectToTarget(self, gids):
         """Check if it's possible to get to goal from closest nodes in current tree.
         Called at the end of each iteration.
         Input: list of goal configurations (goal composite config)
         """
+        # TODO implement k-nearest neighbors...
+        # Actually, how important is this?
         # Only checking closest node right now because that's all nearestneighbors does
         # for q in self.tree.NearestNeighbors(goal,1):
         g_config = self.implicitgraph.NodeIdsToConfigs(gids)
@@ -188,6 +202,7 @@ class MRdRRTPlanner(object):
             if(i % 10 == 0):
                 print(str(i) + "th iteration")
             i += 1
+            print('-------')
 
         if (i == self.max_iter):
             print("Failed to find path - hit maximum iterations.")

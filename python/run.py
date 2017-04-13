@@ -9,12 +9,13 @@ from mrdrrt_planner import MRdRRTPlanner
 
 # assert 1>5, "it works!" TODO add these throughout code
 
+
 def main():
     print("Starting...")
     prm = PRMPlanner(N=1000, load=True, visualize=True)
-    raw_input("Check roadmap and obstacles")
+    raw_input("Wait for plot to pop up, if visualize is on.")
 
-    test = 2
+    test = 5
 
     if test == 1:
         # Test 2 robots
@@ -41,7 +42,7 @@ def main():
         sconfigs = np.array([[-40, -35], [5, -30], [0, 0], [20, -35], [35, -30]])
         gconfigs = np.array([[5, 30], [15, 35], [40, -35], [-20, -38], [-5, 45]])
 
-    mrdrrt = MRdRRTPlanner(prm, 2, visualize=True)  # TODO remove hard-coding n_robots
+    mrdrrt = MRdRRTPlanner(prm, sconfigs.shape[0], visualize=True)
     path = mrdrrt.FindPath(sconfigs, gconfigs)
 
 if __name__ == "__main__":
