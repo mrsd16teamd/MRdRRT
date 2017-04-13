@@ -12,6 +12,10 @@ from mrdrrt.srv import PrmSrv
 import numpy as np
 from prm_planner import PRMPlanner
 
+import rospkg
+
+map_id = 1
+
 
 class PRMPlannerNode(object):
     """PRM node for single Cozmo robot.
@@ -21,14 +25,25 @@ class PRMPlannerNode(object):
 
     def __init__(self):
         """ Initializes its own PRM roadmap. Assume map matches real life"""
-        self.prm = PRMPlanner(N=1000, load=True, visualize=False, filepath='/home/kazu/cozmo_ws/src/MRdRRT/python/prm_save.p')
+
+        rospack = rospkg.RosPack()
+        path = rospack.get_path('mrdrrt')
+        if map_id == 1:
+            filename = 'cube_center.p'
+        elif map_id == 2:
+            filename = 't_map_prm.p'
+
+        print(path)
+        map_path = path + '/roadmaps/' + filename
+
+        self.prm = PRMPlanner(N=1000, map_id=map_id, load=True, visualize=False, filepath = map_path)
         self.tf_listener = tf.TransformListener()
 
         self.plan_pub = rospy.Publisher('prm_path', Path, queue_size=1)
         self.plan_serv = rospy.Service('prm_plan', PrmSrv, self.PlanPath)
 
-        self.map_frame = '/world'
-        self.robot_frame = '/base_link'
+        self.map_frame = 'world'
+        self.robot_frame = 'base_link'
 
         print("Ready to serve!")
 

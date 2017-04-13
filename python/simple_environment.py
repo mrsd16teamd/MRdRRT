@@ -1,6 +1,5 @@
 import numpy as np
 import pylab as pl
-from sys import platform
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 
@@ -11,7 +10,7 @@ class SimpleEnvironment(object):
     rectangles, inflated by robot radius.
     """
 
-    def __init__(self, visualize):
+    def __init__(self, map_id=1, visualize=False):
         self.lower_limits = np.array([-50., -50.])    # [cm]
         self.upper_limits = np.array([50., 50.])
         self.visualize = visualize
@@ -21,6 +20,7 @@ class SimpleEnvironment(object):
         self.robot_radius = 5.25  # [cm]
         self.cube_width = 4.5
 
+        self.map_id = map_id
         self.InitMap()
 
     def ComputeDistance(self, config1, config2):
@@ -102,24 +102,28 @@ class SimpleEnvironment(object):
     def InitMap(self):
         """Add all obstacles in env.
         Obstacles are currently defined here as polygons.
+        [bottom left, bottom right, top right, top left]
         """
         self.obstacles = []
 
-        # EMPTY MAP
-        # define vertices - make sure they're in order
-        w = self.cube_width  # [cm]
-        cube1 = np.array([[0,0], [w, 0], [w, w], [0, w]])
-        self.obstacles.append(self.ExpandObstacle(cube1))
+        if self.map_id == 1:
+            # CUBE MAP
+            w = self.cube_width  # [cm]
+            cube1 = np.array([[0, 0], [w, 0], [w, w], [0, w]])
+            self.obs_unexpanded = [cube1]
 
-        # T MAP. Assume these are already expanded
-        # box1 = np.array([[-45, -45], [45, -45], [45, -45], [-45, -45]])
-        # box2 = np.array([[-45, -20], [-15, -20], [-15, 45], [-45, 45]])
-        # box3 = np.array([[25, -20], [45, -20], [45, 45], [25, 45]])
-        # self.obs_unexpanded = [box1, box2, box3]
+            self.obstacles.append(self.ExpandObstacle(cube1))
 
-        # self.obstacles.append(self.ExpandObstacle(box1))
-        # self.obstacles.append(self.ExpandObstacle(box2))
-        # self.obstacles.append(self.ExpandObstacle(box3))
+        if self.map_id == 2:
+            # T MAP
+            box1 = np.array([[-45, -45], [45, -45], [45, -45], [-45, -45]])
+            box2 = np.array([[-45, -20], [-15, -20], [-15, 45], [-45, 45]])
+            box3 = np.array([[25, -20], [45, -20], [45, 45], [25, 45]])
+            self.obs_unexpanded = [box1, box2, box3]
+
+            self.obstacles.append(self.ExpandObstacle(box1))
+            self.obstacles.append(self.ExpandObstacle(box2))
+            self.obstacles.append(self.ExpandObstacle(box3))
 
     def PlotPolygons(self, polygons, color='b'):
         """Plots polygons on map.
@@ -135,6 +139,7 @@ class SimpleEnvironment(object):
     def InitializePlot(self):
         """Initialize pyplot figure, and plot polygons/obstacles on map"""
         self.fig, self.ax = pl.subplots()
+        pl.axis('equal')
         pl.xlim([self.lower_limits[0], self.upper_limits[0]])
         pl.ylim([self.lower_limits[1], self.upper_limits[1]])
 

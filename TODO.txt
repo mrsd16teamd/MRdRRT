@@ -1,7 +1,9 @@
 Immediate to-dos:
+	-
+	- generate saved roadmaps for all maps, then automate choosing at run.py level for simpleenvironment, prm_planner
 	- Make FindClosestToConfig faster!
-		- currently iterates thru all neighbors linearly to find closest point
 		- replace with FLANN
+			- currently iterates thru all neighbors linearly to find closest point
 
 Next up:
 	- animated visualization of path
@@ -23,6 +25,9 @@ Later
 - plot original obstacles, overlayed with expanded
 - Add some notion of a robot?
 - Replace collision checking in environment with FCL?
+
+- Make this a real library/module/package
+	- Add support for different problems, define interfaces, provide examples and documentation
 
 ----------------------------
 Notes
