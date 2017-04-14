@@ -9,13 +9,14 @@ from mrdrrt_planner import MRdRRTPlanner
 
 # assert 1>5, "it works!" TODO add these throughout code
 
+map_id = 2
+test = 4
+
 
 def main():
     print("Starting...")
     # Map IDs: 1=cube center, 2=T
-    prm = PRMPlanner(n_nodes=1000, map_id=1, load=True, visualize=True)
-
-    test = 1
+    prm = PRMPlanner(n_nodes=1000, map_id=map_id, load=True, visualize=True)
 
     if test == 1:
         # Test 1 robot in cube map

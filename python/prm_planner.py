@@ -4,6 +4,7 @@ from prm_graph import Graph
 import numpy as np
 import time
 import cPickle as pickle
+import sys
 
 
 class PRMPlanner(object):
@@ -15,6 +16,7 @@ class PRMPlanner(object):
         self.env = SimpleEnvironment(map_id, visualize)
         self.graph = Graph(self.env)
         self.n_nodes = n_nodes
+        self.map_id = map_id
 
         self.visualize = visualize
         if self.visualize:
@@ -24,6 +26,9 @@ class PRMPlanner(object):
                 filepath = '../roadmaps/cube_center.p'
             if map_id == 2 and filepath is None:
                 filepath = '../roadmaps/t_map_prm.p'
+            else:
+                print("Enter a valid map ID.")
+                sys.exit()
             self.LoadRoadmap(filepath)
         else:
             raw_input("Hit enter to generate and save new roadmap.")
@@ -52,7 +57,15 @@ class PRMPlanner(object):
         prm_graph = dict()
         prm_graph['vertices'] = self.graph.vertices
         prm_graph['edges'] = self.graph.edges
-        with open("cube_center.p", "wb") as f:
+
+        if self.map_id == 1:
+            filepath = '../roadmaps/cube_center.p'
+        if self.map_id == 2:
+            filepath = '../roadmaps/t_map_prm.p'
+        else:
+            print("Enter a valid map ID.")
+            sys.exit()
+        with open(filepath, "wb") as f:
             pickle.dump(prm_graph, f)
             print("Saved roadmap.")
 

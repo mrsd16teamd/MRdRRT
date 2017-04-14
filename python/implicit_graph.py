@@ -60,8 +60,8 @@ class ImplicitGraph(object):
             neighbors_of_each.append(self.roadmap.edges[node[i]])
             # TODO remove this hack that's here to make things faster
             # Without this, number of neighbors gets to order of 10e6 with 4 robots
-            if len(neighbors_of_each[i]) > 10:
-                neighbors_of_each[i] = random.sample(neighbors_of_each[i], 10)
+            if len(neighbors_of_each[i]) > 30:
+                neighbors_of_each[i] = random.sample(neighbors_of_each[i], 30)
 
         # Return all possible combinations of neighbors
         neighbors = list(itertools.product(*neighbors_of_each))

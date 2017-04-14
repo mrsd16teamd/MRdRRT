@@ -12,8 +12,8 @@ class SimpleEnvironment(object):
     """
 
     def __init__(self, map_id=1, visualize=False):
-        self.lower_limits = np.array([-50., -50.])    # [cm]
-        self.upper_limits = np.array([50., 50.])
+        self.lower_limits = np.array([-60., -60.])    # [cm]
+        self.upper_limits = np.array([60., 60.])
         self.visualize = visualize
 
         # TODO add robots
@@ -76,10 +76,10 @@ class SimpleEnvironment(object):
         """Checks for collision on line between two points in env.
         Checks at n points along line.
         """
-        n = 10
+        n_check_points = 20
         diff = config2 - config1
-        for i in range(n):
-            check_state = config1 + diff/float(n) * i
+        for i in range(n_check_points):
+            check_state = config1 + diff/float(n_check_points) * i
             if self.CheckCollision(check_state):
                 return True
         return False
@@ -117,9 +117,9 @@ class SimpleEnvironment(object):
 
         if self.map_id == 2:
             # T MAP
-            box1 = np.array([[-45, -45], [45, -45], [45, -45], [-45, -45]])
-            box2 = np.array([[-45, -20], [-15, -20], [-15, 45], [-45, 45]])
-            box3 = np.array([[25, -20], [45, -20], [45, 45], [25, 45]])
+            box1 = np.array([[-60, -60], [60, -60], [60, -60], [-60, -60]])
+            box2 = np.array([[-60, -20], [-15, -20], [-15, 60], [-60, 60]])
+            box3 = np.array([[25, -20], [60, -20], [60, 60], [25, 60]])
             self.obs_unexpanded = [box1, box2, box3]
 
             self.obstacles.append(self.ExpandObstacle(box1))
@@ -149,7 +149,6 @@ class SimpleEnvironment(object):
         if _platform == 'darwin':
             pl.ion()
             pl.show()
-
 
     def PlotEdge(self, sconfig, econfig, color='k--', lwidth=0.2):
         """Plot edge between two points on map."""
