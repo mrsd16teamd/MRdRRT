@@ -25,7 +25,7 @@ class Graph(object):
         self.edges[eid].append(sid)
         self.edges[sid].append(eid)
 
-    def GetNeighbors(self, node_id, neighbor_dist_thres=10, max_neighbors=6):
+    def GetNeighbors(self, node_id, neighbor_dist_thres=0.1, max_neighbors=6):
         """Given node ID, retunrs the node ID of closest nodes on roadmap."""
 
         neighbor_ids = []
@@ -54,9 +54,9 @@ class Graph(object):
         """Returns vid of nearest node in graph"""
 
         if self.built_flann_index:
-            nn_id, _ = self.flann.nn_index(config, 2)
+            nn_ids, _ = self.flann.nn_index(config, 2)
         else:
-            nn_id, _ = self.flann.nn(np.array(self.vertices), config, 2)
+            nn_ids, _ = self.flann.nn(np.array(self.vertices), config, 2)
 
         nn_ids = (nn_ids.squeeze()).tolist()
         min_id = nn_ids[1]

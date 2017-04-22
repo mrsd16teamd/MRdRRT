@@ -38,19 +38,34 @@ class PRMPlanner(object):
     def GenerateRoadmap(self):
         """Standard PRM algorithm."""
         print("Generating roadmap...")
-        while (len(self.graph.vertices) < self.n_nodes):
-            # Generate random sample, check that's in Cfree
-            qnew = self.env.SampleConfig()
-            new_id = self.graph.AddVertex(qnew)
 
-            # Get neighbors for new node, check for collision on edge and add to PRM
-            n_ids, n_configs = self.graph.GetNeighbors(new_id)
-            for i, n_id in enumerate(n_ids):
-                if not self.env.CollisionOnLine(qnew, n_configs[i]):
-                    self.graph.AddEdge(new_id, n_id)
+        make_simple_prm = True
 
-        self.graph.flann.build_index(np.array(self.graph.vertices))
-        self.graph.built_flann_index = True
+        if make_simple_prm:
+            node_configs = [[-0.25+k*0.05, -0.05] for k in range(11)] + [[0, k*0.05] for k in range(6)]
+            node_configs = np.array(node_configs)
+            for node in node_configs:
+                node_id = self.graph.AddVertex(node)
+            for id, config in enumerate(self.graph.vertices):
+                n_ids, n_configs = self.graph.GetNeighbors(id)
+                for i, n_id in enumerate(n_ids):
+                    if not self.env.CollisionOnLine(config, n_configs[i]):
+                        self.graph.AddEdge(id, n_id)
+
+        else:
+            while (len(self.graph.vertices) < self.n_nodes):
+                # Generate random sample, check that's in Cfree
+                qnew = self.env.SampleConfig()
+                new_id = self.graph.AddVertex(qnew)
+
+                # Get neighbors for new node, check for collision on edge and add to PRM
+                n_ids, n_configs = self.graph.GetNeighbors(new_id)
+                for i, n_id in enumerate(n_ids):
+                    if not self.env.CollisionOnLine(qnew, n_configs[i]):
+                        self.graph.AddEdge(new_id, n_id)
+
+            self.graph.flann.build_index(np.array(self.graph.vertices))
+            self.graph.built_flann_index = True
 
         if self.visualize:
             self.PlotRoadmap()
