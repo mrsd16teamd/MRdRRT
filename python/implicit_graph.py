@@ -56,13 +56,16 @@ class ImplicitGraph(object):
         Output: list of nodes (list of PRM node ids)
         """
         neighbors_of_each = []  # list of lists
+
         for i in range(len(node)):
             neighbors_of_each.append(self.roadmap.edges[node[i]])
+            neighbors_of_each[i].append(node[i])
             # TODO remove this hack that's here to make things faster
             # Without this, number of neighbors gets to order of 10e6 with 4 robots
             if len(neighbors_of_each[i]) > 30:
                 neighbors_of_each[i] = random.sample(neighbors_of_each[i], 30)
 
+        print(neighbors_of_each)
         # Return all possible combinations of neighbors
         neighbors = list(itertools.product(*neighbors_of_each))
 
