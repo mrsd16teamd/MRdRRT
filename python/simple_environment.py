@@ -76,12 +76,45 @@ class SimpleEnvironment(object):
         """Checks for collision on line between two points in env.
         Checks at n points along line.
         """
-        n_check_points = 20
-        diff = config2 - config1
-        for i in range(n_check_points):
-            check_state = config1 + diff/float(n_check_points) * i
-            if self.CheckCollision(check_state):
+        # check end points
+        if self.CheckCollision(config1):
+            return True
+
+        if self.CheckCollision(config2):
+            return True
+
+        # setup checker function
+        dy = config2[1]-config1[1]
+        dx = config1[0]-config2[0]
+        b = config2[0]*config1[1]-config1[0]*config2[1]
+
+        f = lambda x: dy*x[0] + dx*x[1] + b
+
+        for o in self.obstacles:
+            # if line segment is on one side of the box, skip
+            bl = o[0]
+            tr = o[2]
+            if(config1[0]>tr[0] and config2[0]>tr[0]):
+                continue
+            if(config1[0]<bl[0] and config2[0]<bl[0]):
+                continue
+            if(config1[1]>tr[1] and config2[1]>tr[1]):
+                continue
+            if(config1[1]<bl[1] and config2[1]<bl[1]):
+                continue
+            # otherwise check four corner are on the same side of the line
+            result = np.sign(list(map(f, o)))
+            if not np.all(result[1:]==result[-1:]):
                 return True
+
+        # n_check_points = 20
+        # diff = config2 - config1
+        # for i in range(n_check_points):
+        #     check_state = config1 + diff/float(n_check_points) * i
+        #     if self.CheckCollision(check_state):
+        #         print("collision")
+        #         return True
+        
         return False
 
     ############## Plotting stuff #################
