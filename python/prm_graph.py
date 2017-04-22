@@ -88,8 +88,8 @@ class Graph(object):
 
         path.reverse()
         if (path[0] == self.vertices[start_id]).any():
-            print "Found a path."
+            print("Found a path.")
             return path
         else:
-            print "Could not find path."
+            print("Could not find path.")
             return []

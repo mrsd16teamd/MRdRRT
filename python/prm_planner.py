@@ -3,7 +3,7 @@ from prm_graph import Graph
 
 import numpy as np
 import time
-import cPickle as pickle
+import pickle
 import sys
 
 
@@ -12,7 +12,7 @@ class PRMPlanner(object):
     Can either generate a new roadmap or load a saved one.
     """
 
-    def __init__(self, n_nodes=300, map_id=1, load=True, visualize=False, filepath=None):
+    def __init__(self, n_nodes=300, map_id=1, load=False, visualize=False, filepath=None):
         self.env = SimpleEnvironment(map_id, visualize)
         self.graph = Graph(self.env)
         self.n_nodes = n_nodes
@@ -31,7 +31,7 @@ class PRMPlanner(object):
                 sys.exit()
             self.LoadRoadmap(filepath)
         else:
-            raw_input("Hit enter to generate and save new roadmap.")
+            input("Hit enter to generate and save new roadmap.")
             self.GenerateRoadmap()
             self.SaveRoadmap()
 
@@ -73,12 +73,12 @@ class PRMPlanner(object):
         """Loads pickle with pre-made roadmap."""
         print("Loading roadmap.")
         with open(filepath, 'rb') as f:
-            prm_graph = pickle.load(f)
+            prm_graph = pickle.load(f, fix_imports=True, encoding="utf-8", errors="strict")
             self.graph.vertices = prm_graph['vertices']
             self.graph.edges = prm_graph['edges']
             if self.visualize:
                 self.PlotRoadmap()
-                raw_input("Wait for plot and check roadmap.")
+                input("Wait for plot and check roadmap.")
 
     def PlotRoadmap(self):
         """Plots roadmap's nodes and edges.

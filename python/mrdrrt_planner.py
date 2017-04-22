@@ -154,7 +154,7 @@ class MRdRRTPlanner(object):
             for i in range(len(path)):
                 robot_path.append(path[i][robot, :])
             self.prm.VisualizePath(robot_path, colors[robot])
-        raw_input("Check paths")
+        input("Check paths")
 
     def ShowStartAndGoalConfigs(self, sconfigs, gconfigs):
         colors = ['r', 'g', 'b', 'm', 'y']
@@ -177,7 +177,7 @@ class MRdRRTPlanner(object):
             return
 
         self.ShowStartAndGoalConfigs(sconfigs, gconfigs)
-        raw_input("Wait for start/goal configs, and enter to start planning")
+        input("Wait for start/goal configs, and enter to start planning")
 
         for i in range(len(sconfigs)):
             if self.env.CheckCollision(sconfigs[i]) or self.env.CheckCollision(gconfigs[i]):

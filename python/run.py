@@ -16,7 +16,7 @@ test = 4
 def main():
     print("Starting...")
     # Map IDs: 1=cube center, 2=T
-    prm = PRMPlanner(n_nodes=1000, map_id=map_id, load=True, visualize=True)
+    prm = PRMPlanner(n_nodes=1000, map_id=map_id, load=False, visualize=True)
 
     if test == 1:
         # Test 1 robot in cube map
