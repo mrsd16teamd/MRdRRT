@@ -49,6 +49,9 @@ class PRMPlanner(object):
                 if not self.env.CollisionOnLine(qnew, n_configs[i]):
                     self.graph.AddEdge(new_id, n_id)
 
+        self.graph.flann.build_index(np.array(self.graph.vertices))
+        self.graph.built_flann_index = True
+
         if self.visualize:
             self.PlotRoadmap()
 
