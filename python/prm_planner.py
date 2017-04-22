@@ -12,7 +12,7 @@ class PRMPlanner(object):
     Can either generate a new roadmap or load a saved one.
     """
 
-    def __init__(self, n_nodes=300, map_id=1, load=False, visualize=False, filepath=None):
+    def __init__(self, n_nodes=300, map_id=1, load=True, visualize=False, filepath=None):
         self.env = SimpleEnvironment(map_id, visualize)
         self.graph = Graph(self.env)
         self.n_nodes = n_nodes
@@ -24,10 +24,10 @@ class PRMPlanner(object):
         if load:
             if map_id == 1 and filepath is None:
                 filepath = '../roadmaps/cube_center.p'
-            if map_id == 2 and filepath is None:
+            elif map_id == 2 and filepath is None:
                 filepath = '../roadmaps/t_map_prm.p'
             else:
-                print("Enter a valid map ID.")
+                print("Enter a valid map ID.", map_id, filepath)
                 sys.exit()
             self.LoadRoadmap(filepath)
         else:
@@ -60,7 +60,7 @@ class PRMPlanner(object):
 
         if self.map_id == 1:
             filepath = '../roadmaps/cube_center.p'
-        if self.map_id == 2:
+        elif self.map_id == 2:
             filepath = '../roadmaps/t_map_prm.p'
         else:
             print("Enter a valid map ID.")
@@ -73,7 +73,7 @@ class PRMPlanner(object):
         """Loads pickle with pre-made roadmap."""
         print("Loading roadmap.")
         with open(filepath, 'rb') as f:
-            prm_graph = pickle.load(f, fix_imports=True, encoding="utf-8", errors="strict")
+            prm_graph = pickle.load(f, fix_imports=True, encoding="ascii", errors="strict")
             self.graph.vertices = prm_graph['vertices']
             self.graph.edges = prm_graph['edges']
             if self.visualize:
