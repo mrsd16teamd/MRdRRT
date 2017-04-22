@@ -64,9 +64,9 @@ class SimpleEnvironment(object):
                 return True
 
             # Check robot-robot collision
-            for j in range(n_robots):
-                if (i == j):
-                    continue
+            for j in range(i+1, n_robots):
+                # if (i == j):
+                #     continue
                 dist = self.ComputeDistance(composite_config[i], composite_config[j])
                 if (dist < self.robot_radius+0.05):  # TODO move this hard-coded cushion
                     return True
