@@ -1,6 +1,7 @@
 import operator
+import pyflann
+import numpy as np
 from collections import defaultdict
-
 
 class Graph(object):
     """Graph structure with adjacency list representation for PRM."""
@@ -9,6 +10,9 @@ class Graph(object):
         self.vertices = []
         self.edges = defaultdict(list)
         self.env = planning_env
+        self.flann = pyflann.FLANN()
+        pyflann.set_distance_type('euclidean')
+        self.built_flann_index = False
 
     def AddVertex(self, config):
         """Add vertex to list of nodes."""
@@ -21,31 +25,42 @@ class Graph(object):
         self.edges[eid].append(sid)
         self.edges[sid].append(eid)
 
-    def GetNeighbors(self, node_id, neighbor_dist_thres=10, max_neighbors=5):
-        """Given node ID, retunrs the node ID of closest node on roadmap."""
-        # TODO replace with FLANN
-        config = self.vertices[node_id]
+    def GetNeighbors(self, node_id, neighbor_dist_thres=10, max_neighbors=6):
+        """Given node ID, retunrs the node ID of closest nodes on roadmap."""
+
         neighbor_ids = []
         neighbor_configs = []
 
-        for vid, v in enumerate(self.vertices):
-            dist = self.env.ComputeDistance(config, v)
-            if (dist < neighbor_dist_thres and dist != 0.0):
-                neighbor_ids.append(vid)
-                neighbor_configs.append(v)
-                if len(neighbor_ids) > max_neighbors:
-                    break
+        if len(self.vertices) > 2:
+            test_config = self.vertices[node_id]
+            max_neighbors = min(len(self.vertices), max_neighbors)
+
+            if self.built_flann_index:
+                nn_ids, dists = self.flann.nn_index(test_config, max_neighbors)
+            else:
+                nn_ids, dists = self.flann.nn(np.array(self.vertices), test_config, max_neighbors)
+
+            nn_ids = (nn_ids.squeeze()).tolist()
+            dists = (dists.squeeze()).tolist()
+
+            for i, neighbor_id in enumerate(nn_ids):
+                if dists[i] < neighbor_dist_thres  and dists[i] > 0.0:
+                    neighbor_configs.append(self.vertices[neighbor_id])
+                    neighbor_ids.append(neighbor_id)
 
         return neighbor_ids, neighbor_configs
 
     def GetNearestNode(self, config):
         """Returns vid of nearest node in graph"""
-        min_dist = 9999
-        min_id = 0
-        for vid, v in enumerate(self.vertices):
-            if(self.env.ComputeDistance(config, v) < min_dist):
-                min_dist = self.env.ComputeDistance(config, v)
-                min_id = vid
+
+        if self.built_flann_index:
+            nn_id, _ = self.flann.nn_index(config, 2)
+        else:
+            nn_id, _ = self.flann.nn(np.array(self.vertices), config, 2)
+
+        nn_ids = (nn_ids.squeeze()).tolist()
+        min_id = nn_ids[1]
+
         return min_id
 
     def FindMinDistNode(self, node_set, dist):

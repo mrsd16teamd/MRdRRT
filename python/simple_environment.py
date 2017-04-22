@@ -12,8 +12,8 @@ class SimpleEnvironment(object):
     """
 
     def __init__(self, map_id=1, visualize=False):
-        self.lower_limits = np.array([-60., -60.])    # [cm]
-        self.upper_limits = np.array([60., 60.])
+        self.lower_limits = np.array([-30., -30.])    # [cm]
+        self.upper_limits = np.array([30., 30.])
         self.visualize = visualize
 
         # TODO add robots
@@ -140,19 +140,21 @@ class SimpleEnvironment(object):
         """
         self.obstacles = []
 
-        if self.map_id == 1:
-            # CUBE MAP
-            w = self.cube_width  # [cm]
+        if self.map_id == 1:        # CUBE MAP
+            w = self.cube_width     # [cm]
             cube1 = np.array([[0, 0], [w, 0], [w, w], [0, w]])
             self.obs_unexpanded = [cube1]
 
             self.obstacles.append(self.ExpandObstacle(cube1))
 
-        if self.map_id == 2:
-            # T MAP
-            box1 = np.array([[-60, -60], [60, -60], [60, -60], [-60, -60]])
-            box2 = np.array([[-60, -20], [-15, -20], [-15, 60], [-60, 60]])
-            box3 = np.array([[25, -20], [60, -20], [60, 60], [25, 60]])
+        if self.map_id == 2:        # T-MAP
+            # BIGGER T-MAP
+            # box1 = np.array([[-60, -60], [60, -60], [60, -60], [-60, -60]])
+            # box2 = np.array([[-60, -20], [-15, -20], [-15, 60], [-60, 60]])
+            # box3 = np.array([[25, -20], [60, -20], [60, 60], [25, 60]])
+            box1 = np.array([[-30, -30], [30, -30], [30, -15], [-30, -15]])
+            box2 = np.array([[-30, 0], [-7.5, 0], [-7.5, 30], [-30, 30]])
+            box3 = np.array([[7.5, 0], [30, 0], [30, 30], [7.5, 30]])
             self.obs_unexpanded = [box1, box2, box3]
 
             self.obstacles.append(self.ExpandObstacle(box1))
