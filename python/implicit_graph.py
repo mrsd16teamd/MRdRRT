@@ -65,7 +65,6 @@ class ImplicitGraph(object):
             if len(neighbors_of_each[i]) > 30:
                 neighbors_of_each[i] = random.sample(neighbors_of_each[i], 30)
 
-        print(neighbors_of_each)
         # Return all possible combinations of neighbors
         neighbors = list(itertools.product(*neighbors_of_each))
 
