@@ -1,6 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/python
+# -*- encoding: utf-8 -*-
+
 import rospy
 import tf
+import rospkg
 
 import std_msgs.msg
 import geometry_msgs.msg
@@ -12,10 +15,8 @@ from mrdrrt.srv import PrmSrv
 import numpy as np
 from prm_planner import PRMPlanner
 
-import rospkg
 
 map_id = 1
-
 
 class PRMPlannerNode(object):
     """PRM node for single Cozmo robot.
@@ -28,44 +29,49 @@ class PRMPlannerNode(object):
 
         rospack = rospkg.RosPack()
         path = rospack.get_path('mrdrrt')
-        if map_id == 1:
-            filename = 'cube_center.p'
-        elif map_id == 2:
-            filename = 't_map_prm.p'
-        map_path = path + '/roadmaps/' + filename
+        map_path = path + '/roadmaps/' + 't_map_prm.p'
 
-        self.prm = PRMPlanner(n_nodes=1000, map_id=map_id, load=True, visualize=False, filepath = map_path)
+        self.prm = PRMPlanner(n_nodes=300, map_id=map_id, load=True, visualize=False, filepath = map_path)
+
+        self.ns = rospy.get_namespace()[:-1]
+        self.map_frame = '/map'
+        self.robot_frame = self.ns + '/base_link'
+
         self.tf_listener = tf.TransformListener()
-
-        self.plan_pub = rospy.Publisher('prm_path', Path, queue_size=1)
+        self.plan_pub = rospy.Publisher(self.ns+'/path', Path, queue_size=1)
         self.plan_serv = rospy.Service('prm_plan', PrmSrv, self.PlanPath)
 
-        self.map_frame = 'world'
-        self.robot_frame = 'base_link'
-
         print("Ready to serve! Call prm_plan service with goal pose.")
+
+    def GetRobotPose(self):
+        try:
+            (trans,rot) = self.tf_listener.lookupTransform(self.map_frame, self.robot_frame, rospy.Time(0))
+            eul = tf.transformations.euler_from_quaternion(rot)
+            yaw = eul[2]
+            config = np.array([trans[0], trans[1], yaw])
+            return config
+        except:
+            print("Couldn't get transform between " + self.map_frame + " and " + self.robot_frame)
+            return False
 
     def PlanPath(self, request):
         """Processes service request (query for path to goal point).
         Path is published in nav_msgs/Path type.
         """
-        print("Starting PlanPath.")
+        # print("Starting PlanPath.")
         goal_config = np.array([request.goal_pose.x, request.goal_pose.y, request.goal_pose.theta])
 
-        try:
-            (trans,rot) = self.tf_listener.lookupTransform(self.map_frame, self.robot_frame, rospy.Time(0))
-            eul = tf.transformations.euler_from_quaternion(rot)
-            yaw = eul[2]
-            # trans = [-30, -30]
-            # yaw = 0.1
-        except:
-            print("Couldn't get transform between " + self.map_frame + " and " + self.robot_frame)
-            return False
-
-
-        start_config = np.array([trans[0], trans[1], yaw])
+        start_config = self.GetRobotPose()
 
         prm_path = self.prm.FindPath(start_config, goal_config)
+
+        # Dummy path
+        # corner1 = np.array([0.2, 0, -np.pi/2])
+        # corner2 = np.array([0.2, -0.2, np.pi])
+        # corner3 = np.array([0, -0.2, np.pi/2])
+        # prm_path = [corner1, corner2, corner3 , goal_config]
+
+        # Make sure start_config is not in path!
 
         # Process path and publish as nav_msgs/Path
         # - header
@@ -79,20 +85,14 @@ class PRMPlannerNode(object):
 
             pub_path = []
             print("Path: ")
-            for config in prm_path:
+            for config in prm_path[1:]: #ignore first node in path; it's the start config
                 pose = PoseStamped()
-                pose.pose.position.x = config[0]
-                pose.pose.position.y = config[1]
+                pose.pose.position.x, pose.pose.position.y = config[0], config[1]#prm plans in cm
 
-                # TODO test this
-                yaw = config[2]
-                quat = tf.transformations.quaternion_from_euler(0, 0, yaw)
-                pose.pose.orientation.x = quat[0]
-                pose.pose.orientation.y = quat[1]
-                pose.pose.orientation.z = quat[2]
-                pose.pose.orientation.w = quat[3]
+                quat = tf.transformations.quaternion_from_euler(0, 0, config[2])
+                pose.pose.orientation.x, pose.pose.orientation.y, pose.pose.orientation.z, pose.pose.orientation.w = quat[0], quat[1], quat[2], quat[3]
                 pub_path.append(pose)
-                print(config)
+                print(pose.pose.position.x, pose.pose.position.y, config[2])
 
             plan_msg.poses = pub_path
             self.plan_pub.publish(plan_msg)

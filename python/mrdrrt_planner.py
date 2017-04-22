@@ -9,6 +9,7 @@ from mrdrrt_tree import Tree
 from implicit_graph import ImplicitGraph
 
 from profile_utils import timefunc
+from collections import defaultdict
 
 
 class MRdRRTPlanner(object):
@@ -27,7 +28,7 @@ class MRdRRTPlanner(object):
         self.env = prm.env
         self.implicitgraph = ImplicitGraph(self.env, prm, n_robots)
         self.tree = Tree(self.env, self.implicitgraph)
-        self.max_iter = 2000
+        self.max_iter = 500
         self.prm = prm  # Here just for VisualizePlot
         self.visualize = visualize
 
@@ -53,8 +54,8 @@ class MRdRRTPlanner(object):
         explored yet, and is closest (by sum of euclidean distances) to qnear.
         """
         neighbors = self.implicitgraph.GetNeighbors(qnear)
+
         min_dist, nearest = self.FindClosestToConfig(qrand, neighbors)
-        # nearest = self.implicitgraph.NearestNodeInGraph(qnear)
 
         # check collision between qnear and nearest node
         # TODO clean this up, move somewhere else
@@ -139,6 +140,7 @@ class MRdRRTPlanner(object):
         path.append(self.implicitgraph.NodeIdsToConfigs(sids))
         path.append(sconfigs)
         path.reverse()
+
         return path
 
     def VisualizePath(self, path):
@@ -154,7 +156,7 @@ class MRdRRTPlanner(object):
             for i in range(len(path)):
                 robot_path.append(path[i][robot, :])
             self.prm.VisualizePath(robot_path, colors[robot])
-        input("Check paths")
+        raw_input("Check paths")
 
     def ShowStartAndGoalConfigs(self, sconfigs, gconfigs):
         colors = ['r', 'g', 'b', 'm', 'y']
@@ -177,7 +179,7 @@ class MRdRRTPlanner(object):
             return
 
         self.ShowStartAndGoalConfigs(sconfigs, gconfigs)
-        input("Wait for start/goal configs, and enter to start planning")
+        raw_input("Wait for start/goal configs, and enter to start planning")
 
         for i in range(len(sconfigs)):
             if self.env.CheckCollision(sconfigs[i]) or self.env.CheckCollision(gconfigs[i]):
@@ -210,3 +212,10 @@ class MRdRRTPlanner(object):
         else:
             if self.visualize:
                 self.VisualizePath(path)
+
+            # At this point, path is a list of numpy arrays. Want a dictionary of list of numpy arrays
+            path_dict = defaultdict(list)
+            for r in range(self.n_robots):
+                for t in range(1, len(path)):
+                    path_dict[r].append(path[t][r])
+            return path_dict
