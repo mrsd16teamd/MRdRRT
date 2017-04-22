@@ -12,14 +12,15 @@ class SimpleEnvironment(object):
     """
 
     def __init__(self, map_id=1, visualize=False):
-        self.lower_limits = np.array([-30., -30.])    # [cm]
-        self.upper_limits = np.array([30., 30.])
+        self.lower_limits = np.array([-0.30, -0.30])    # [m]
+        self.upper_limits = np.array([0.30, 0.30])
         self.visualize = visualize
 
         # TODO add robots
         self.robots = []
-        self.robot_radius = 5.25  # [cm]
-        self.cube_width = 4.5
+        self.robot_radius = 0.0525  # [m]
+        self.cube_width = 0.045
+        self.inflation_radius = 0.04
 
         self.map_id = map_id
         self.InitMap()
@@ -68,7 +69,7 @@ class SimpleEnvironment(object):
                 # if (i == j):
                 #     continue
                 dist = self.ComputeDistance(composite_config[i], composite_config[j])
-                if (dist < self.robot_radius+0.05):  # TODO move this hard-coded cushion
+                if (dist < self.robot_radius+0.0005):  # TODO move this hard-coded cushion
                     return True
         return False
 
@@ -122,7 +123,7 @@ class SimpleEnvironment(object):
         """Expand obstacle boundary by robot radius.
         Assumes format of: [bottom left, bottom right, top right, top left]
         """
-        r = self.robot_radius
+        r = self.inflation_radius
         obs[0][0] -= r
         obs[0][1] -= r
         obs[1][0] += r
@@ -141,20 +142,16 @@ class SimpleEnvironment(object):
         self.obstacles = []
 
         if self.map_id == 1:        # CUBE MAP
-            w = self.cube_width     # [cm]
+            w = self.cube_width     # [m]
             cube1 = np.array([[0, 0], [w, 0], [w, w], [0, w]])
             self.obs_unexpanded = [cube1]
 
             self.obstacles.append(self.ExpandObstacle(cube1))
 
         if self.map_id == 2:        # T-MAP
-            # BIGGER T-MAP
-            # box1 = np.array([[-60, -60], [60, -60], [60, -60], [-60, -60]])
-            # box2 = np.array([[-60, -20], [-15, -20], [-15, 60], [-60, 60]])
-            # box3 = np.array([[25, -20], [60, -20], [60, 60], [25, 60]])
-            box1 = np.array([[-30, -30], [30, -30], [30, -15], [-30, -15]])
-            box2 = np.array([[-30, 0], [-7.5, 0], [-7.5, 30], [-30, 30]])
-            box3 = np.array([[7.5, 0], [30, 0], [30, 30], [7.5, 30]])
+            box1 = np.array([[-0.30, -0.30], [0.30, -0.30], [0.30, -0.10], [-0.30, -0.10]])
+            box2 = np.array([[-0.30, 0], [-0.05, 0], [-0.05, 0.30], [-0.30, 0.30]])
+            box3 = np.array([[0.05, 0], [0.30, 0], [0.30, 0.30], [0.05, 0.30]])
             self.obs_unexpanded = [box1, box2, box3]
 
             self.obstacles.append(self.ExpandObstacle(box1))
