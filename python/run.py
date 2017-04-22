@@ -15,8 +15,9 @@ test = 4
 def main():
     print("Starting...")
     # Map IDs: 1=cube center, 2=T
-    prm = PRMPlanner(n_nodes=1000, map_id=map_id, load=True, visualize=True, filepath=None)
+    prm = PRMPlanner(n_nodes=1000, map_id=map_id, load=False, visualize=True, filepath=None)
 
+    # TODO: Change start and goal configs for new map (3, 4 already corrected)
     if test == 1:
         # Test 1 robot in cube map
         sconfigs = np.array([[0, -30]])
@@ -29,17 +30,17 @@ def main():
 
     if test == 3:
         # Test 2 robots in T map
-        sconfigs = np.array([[-40, -35], [15, 35]])
-        gconfigs = np.array([[5, 30], [-30, -37]])
+        sconfigs = np.array([[-25, -7.5], [25, -7.5]])
+        gconfigs = np.array([[25, -7.5], [-25, -7.5]])
 
     if test == 4:
         # Test 3 robots in T map
-        sconfigs = np.array([[-40, -35], [5, -30], [0, 0]])
-        gconfigs = np.array([[5, 30], [15, 35], [40, -35]])
+        sconfigs = np.array([[-25, -7.5], [25, -7.5], [0, 25]])
+        gconfigs = np.array([[25, -7.5], [0, 25], [-25, -7.5]])
 
     if test == 5:
         # Test 4 robots in T map
-        sconfigs = np.array([[-40, -35], [5, -30], [0, 0], [20, -35]])
+        sconfigs = np.array([[-25, -35], [5, -30], [0, 0], [20, -35]])
         gconfigs = np.array([[5, 30], [15, 35], [40, -35], [-20, -38]])
 
     if test == 6:
