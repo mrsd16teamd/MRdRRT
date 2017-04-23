@@ -40,7 +40,9 @@ class PRMPlanner(object):
 
         if make_simple_prm:
             # node_configs = [[-0.225+k*0.075, -0.05] for k in range(6)] + [[0, -0.05+k*0.075] for k in range(5)] # 7.5cm resolution
-            node_configs = [[-0.28+k*0.14, -0.05] for k in range(5)] + [[0, -0.05+k*0.14] for k in range(3)] # 14cm resolution
+            # node_configs = [[-0.28+k*0.14, -0.05] for k in range(5)] + [[0, -0.05+k*0.14] for k in range(3)] # 14cm resolution
+            # node_configs = [[-0.14+k*0.14, -0.05] for k in range(3)] + [[0, -0.05+k*0.14] for k in range(3)] # 14cm resolution
+            node_configs = [[-0.20, -0.05], [-0.10, -0.05], [0.0, -0.05], [0.10, -0.05], [0.20, -0.05], [0, -0.05], [0, 0.10], [0, 0.20]]
             node_configs = np.array(node_configs)
             for node in node_configs:
                 node_id = self.graph.AddVertex(node)

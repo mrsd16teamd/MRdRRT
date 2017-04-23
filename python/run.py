@@ -14,7 +14,7 @@ from mrdrrt_planner import MRdRRTPlanner
 def main():
     print("Starting...")
     # Map IDs: 1=cube center, 2=T
-    prm = PRMPlanner(n_nodes=300, map_id=2, load=True, visualize=True)
+    prm = PRMPlanner(n_nodes=300, map_id=2, load=False, visualize=True)
 
     test = 3
 
@@ -33,7 +33,7 @@ def main():
         # sconfigs = np.array([[-0.25, -0.05], [0.25, -0.05]])
         # gconfigs = np.array([[0.15, -0.05], [-0.15, -0.05]])
 
-        sconfigs = np.array([[-0.13900678, -0.05191908], [ 0.15983319, -0.05612765]])
+        sconfigs = np.array([[-0.15, -0.05], [ 0.15, -0.05]])
         gconfigs = np.array([[ 0.2,  -0.05], [-0.2,  -0.05]])
 
     if test == 4:
