@@ -6,6 +6,7 @@ import tf
 import rospkg
 
 import std_msgs.msg
+from std_srvs.srv import Trigger
 import geometry_msgs.msg
 import nav_msgs.msg
 from geometry_msgs.msg import (Twist, TransformStamped, PoseStamped)
@@ -26,8 +27,8 @@ class MrdrrtCommanderNode:
         path = rospack.get_path('mrdrrt')
         map_path = path + '/roadmaps/' + 't_map_prm.p'
 
-        self.prm = PRMPlanner(n_nodes=300, map_id=map_id, load=True, visualize=False, filepath=map_path)
-        self.mrdrrt = MRdRRTPlanner(self.prm, n_robots=n_rob, visualize=False)
+        # self.prm = PRMPlanner(n_nodes=300, map_id=map_id, load=True, visualize=False, filepath=map_path)
+        # self.mrdrrt = MRdRRTPlanner(self.prm, n_robots=n_rob, visualize=False)
 
         self.map_frame = '/map'
 
@@ -36,10 +37,12 @@ class MrdrrtCommanderNode:
         self.waypoint_pubs = [rospy.Publisher(self.robot_namespaces[i]+'/goal', PoseStamped, queue_size=3) for i in range(n_rob)]
 
         self.tf_listener = tf.TransformListener()
-        self.plan_serv = rospy.Service('mrdrrt_start', Empty, self.PlanPath)
+        self.plan_serv = rospy.Service('mrdrrt_start', Trigger, self.PlanPath)
 
         # TODO define subscriber for checking if robots are done going to waypoint
         self.robots_done_sub = rospy.Subscriber('/goal_reached', std_msgs.msg.Int8, self.GoalReachedCb, queue_size=5)
+
+        print("MRdRRT commander node ready!")
 
     def GoalReachedCb(self, msg):
         self.n_robots_done += 1
@@ -59,11 +62,13 @@ class MrdrrtCommanderNode:
         # Find robots' starting configurations
         sconfigs = []
         for i in range(n_rob):
-            start_configs.append(self.GetRobotPose(i))
+            sconfigs.append(self.GetRobotPose(i))
         sconfigs = np.array(sconfigs)
 
         # Get path from mrdrrt - will dictionary of lists of numpy arrays
-        path = self.mrdrrt.FindPath(sconfigs, gconfigs)
+        # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
+
+        path = {0: [np.array([0.1, -0.05,0]), np.array([0,0,0])], 1: [np.array([-0.2, -0.05, 0]), np.array([-0.2,0.2,0])]}
 
         # Tell robots to follow their paths
         n_waypoints = len(path[0])
@@ -71,9 +76,9 @@ class MrdrrtCommanderNode:
             # Send robot their waypoints
             for r in range(n_rob):
                 pose_msg = PoseStamped()
-                pose_msg.pose.position.x, pose_msg.pose.position.y = config[0], config[1]
+                pose_msg.pose.position.x, pose_msg.pose.position.y = path[r][t][0], path[r][t][1]
 
-                quat = tf.transformations.quaternion_from_euler(0, 0, config[2])
+                quat = tf.transformations.quaternion_from_euler(0, 0, path[r][t][2])
                 pose_msg.pose.orientation.x, pose_msg.pose.orientation.y, pose_msg.pose.orientation.z, pose_msg.pose.orientation.w = quat[0], quat[1], quat[2], quat[3]
                 
                 self.waypoint_pubs[r].publish(pose_msg)
@@ -85,4 +90,8 @@ class MrdrrtCommanderNode:
             print("All robots done with their waypoints.")
 
 
+if __name__ == '__main__':
+    rospy.init_node('mrdrrt_commander_node', anonymous=True)
+    prmnode = MrdrrtCommanderNode()
+    rospy.spin()
 
