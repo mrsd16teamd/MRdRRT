@@ -29,8 +29,8 @@ def main():
 
     if test == 3:
         # Test 2 robots in T map
-        sconfigs = np.array([[-0.25, -0.05], [0.25, -0.05]])
-        gconfigs = np.array([[0.25, -0.05], [-0.25, -0.05]])
+        sconfigs = np.array([[-0.25, -0.05], [0.15, -0.05]])
+        gconfigs = np.array([[0.25, -0.05], [-0.15, -0.05]])
 
     if test == 4:
         # Test 3 robots in T map
@@ -47,7 +47,7 @@ def main():
         sconfigs = np.array([[-0.4, -0.35], [5, -0.3], [0, 0], [0.2, -0.35], [0.35, -0.3]])
         gconfigs = np.array([[0.05, 0.3], [0.15, 0.35], [0.4, -0.35], [-0.2, -0.38], [-0.05, 0.45]])
 
-    mrdrrt = MRdRRTPlanner(prm, n_robots=sconfigs.shape[0], visualize=False)
+    mrdrrt = MRdRRTPlanner(prm, n_robots=sconfigs.shape[0], visualize=True)
     path = mrdrrt.FindPath(sconfigs, gconfigs)
     print(path)
 
