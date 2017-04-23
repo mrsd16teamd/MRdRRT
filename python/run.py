@@ -55,7 +55,7 @@ def main():
     path = mrdrrt.FindPath(sconfigs, gconfigs)
     print(path)
 
-    filepath = '../paths/tmap_path.p'
+    filepath = '../paths/tmap_path2.p'
     with open(filepath, "wb") as f:
         pickle.dump(path, f)
         print("Saved MRdRRT path.")
