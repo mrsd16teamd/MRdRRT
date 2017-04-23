@@ -20,7 +20,7 @@ class SimpleEnvironment(object):
         self.robots = []
         self.robot_radius = 0.0525  # [m]
         self.cube_width = 0.045
-        self.inflation_radius = 0.04
+        self.inflation_radius = 0.01
 
         self.map_id = map_id
         self.InitMap()
