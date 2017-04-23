@@ -29,8 +29,8 @@ def main():
 
     if test == 3:
         # Test 2 robots in T map
-        sconfigs = np.array([[-0.25, -0.05], [0.15, -0.05]])
-        gconfigs = np.array([[0.25, -0.05], [-0.15, -0.05]])
+        sconfigs = np.array([[-0.25, -0.05], [0.25, -0.05]])
+        gconfigs = np.array([[0.15, -0.05], [-0.15, -0.05]])
 
     if test == 4:
         # Test 3 robots in T map

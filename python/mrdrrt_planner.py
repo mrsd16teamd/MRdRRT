@@ -53,9 +53,10 @@ class MRdRRTPlanner(object):
         return qnew, a neighbor of qnear on the implicit graph that hasn't been
         explored yet, and is closest (by sum of euclidean distances) to qnear.
         """
-        neighbors = self.implicitgraph.GetNeighbors(qnear)
-
-        min_dist, nearest = self.FindClosestToConfig(qrand, neighbors)
+        # neighbors = self.implicitgraph.GetNeighbors(qnear)
+        #
+        # min_dist, nearest = self.FindClosestToConfig(qrand, neighbors)
+        nearest = self.implicitgraph.GetClosestCompositeNeighbor(qnear,qrand)
 
         # check collision between qnear and nearest node
         # TODO clean this up, move somewhere else
@@ -178,7 +179,7 @@ class MRdRRTPlanner(object):
         if not pl.get_fignums():
             self.env.InitializePlot()
             self.prm.PlotRoadmap()
-        
+
         for i in range(len(path)-1):
             pl.close()
             self.env.InitializePlot()
@@ -188,7 +189,7 @@ class MRdRRTPlanner(object):
                 robot_path.append(path[i][robot, :])
                 robot_path.append(path[i+1][robot, :])
                 self.prm.VisualizePath(robot_path, colors[robot])
-                
+
             raw_input("Check paths")
 
 

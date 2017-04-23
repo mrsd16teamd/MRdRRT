@@ -25,7 +25,7 @@ class Graph(object):
         self.edges[eid].append(sid)
         self.edges[sid].append(eid)
 
-    def GetNeighbors(self, node_id, neighbor_dist_thres=0.1, max_neighbors=6):
+    def GetNeighbors(self, node_id, neighbor_dist_thres=0.055, max_neighbors=6):
         """Given node ID, retunrs the node ID of closest nodes on roadmap."""
 
         neighbor_ids = []

@@ -69,3 +69,54 @@ class ImplicitGraph(object):
         neighbors = list(itertools.product(*neighbors_of_each))
 
         return neighbors
+
+
+    # @timefunc
+    # def GetClosestCompositeConfig(self, qnear, qrand):
+    #     """ Given randomly sampled comp config and
+    #     nearest config on current tree, find closest neighbor of qnear
+    #     """
+    #
+    #     neighbors_of_each = []
+    #     for i in range(len(qnear)):
+    #         neighbors_of_each.append(self.roadmap.edges[qnear[i]])
+    #         neighbors_of_each[i].append(qnear[i])
+    #         # TODO remove this hack that's here to make things faster
+    #         # Without this, number of neighbors gets to order of 10e6 with 4 robots
+    #         if len(neighbors_of_each[i]) > 30:
+    #             neighbors_of_each[i] = random.sample(neighbors_of_each[i], 30)
+    #
+    #     # Return all possible combinations of neighbors
+    #     neighbor_ids = np.array(list(itertools.product(*neighbors_of_each)))
+    #     neighbor_ids.flatten()
+    #     neighbor_configs = []
+    #     for nid in neighbor_ids:
+    #         neighbor_configs.append(self.roadmap.vertices[nid])
+    #     neighbor_configs = np.array(neighbor_configs)
+    #
+    #     # Find closest composite neighbor
+
+
+
+
+    @timefunc
+    def GetClosestCompositeNeighbor(self, qnear, qrand):
+        """ Given randomly sampled comp config and
+        nearest config on current tree, find closest neighbor of qnear
+        """
+        nearest = ()
+        all_neighbors = []
+        for i in range(len(qnear)):
+            all_neighbors.append(self.roadmap.edges[qnear[i]])
+            all_neighbors[i].append(qnear[i])
+
+        for neighbors_of_each in (all_neighbors):
+            dataset = []
+            for nid in neighbors_of_each:
+                dataset.append(self.roadmap.vertices[nid])
+            nn_id, _ = self.roadmap.flann.nn(np.array(dataset), qrand[i], 1)
+            nearest += (neighbors_of_each[nn_id[0]],)
+
+        print nearest
+
+        return nearest
