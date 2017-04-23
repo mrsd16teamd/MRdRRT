@@ -78,15 +78,15 @@ class MrdrrtCommanderNode:
         sconfigs = np.array(sconfigs)
 
         # Get path from mrdrrt - will dictionary of lists of numpy arrays
-        print(sconfigs)
-        print(gconfigs)
+        print("Start Configs:\n{}".format(sconfigs))
+        print("Goal Configs:\n{}".format(gconfigs))
 
         # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
         # path = {0: [np.array([0.1, -0.05,0]), np.array([0,0,0])], 1: [np.array([-0.2, -0.05, 0]), np.array([-0.2,0.2,0])]}
 
         rospack = rospkg.RosPack()
         path = rospack.get_path('mrdrrt')
-        filepath = path + '/paths/tmap_path.p'
+        filepath = path + '/paths/tmap_path2.p'
         with open(filepath, 'rb') as f:
             path = pickle.load(f)
         
@@ -105,6 +105,7 @@ class MrdrrtCommanderNode:
             for r in range(n_rob):
                 # print("Robot {}, go!".format(r))
                 pose_msg = PoseStamped()
+                pose_msg.header.frame_id = "map"
                 pose_msg.pose.position.x, pose_msg.pose.position.y = path[r][t][0], path[r][t][1]
 
                 quat = tf.transformations.quaternion_from_euler(0, 0, path[r][t][2])
