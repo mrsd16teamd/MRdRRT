@@ -18,7 +18,7 @@ from mrdrrt_planner import MRdRRTPlanner
 
 
 n_rob = 2
-gconfigs = np.array([[5, 30], [15, 35]]) #hard-coded goal configs, for now
+gconfigs = np.array([[0.2, -0.05], [-0.2, -0.05]]) #hard-coded goal configs, for now
 
 class MrdrrtCommanderNode:
 
@@ -27,7 +27,7 @@ class MrdrrtCommanderNode:
         path = rospack.get_path('mrdrrt')
         map_path = path + '/roadmaps/' + 't_map_prm.p'
 
-        prm = PRMPlanner(n_nodes=300, map_id=map_id, load=True, visualize=False, filepath=map_path)
+        prm = PRMPlanner(n_nodes=300, map_id=1, load=True, visualize=False, filepath=map_path)
         self.mrdrrt = MRdRRTPlanner(prm, n_robots=n_rob, visualize=False)
 
         self.tf_listener = tf.TransformListener()
@@ -49,7 +49,7 @@ class MrdrrtCommanderNode:
             (trans,rot) = self.tf_listener.lookupTransform(self.map_frame, self.robot_frames[robot_id], rospy.Time(0))
             eul = tf.transformations.euler_from_quaternion(rot)
             yaw = eul[2]
-            config = np.array([trans[0], trans[1], yaw])
+            config = np.array([trans[0], trans[1]])
             return config
         except:
             print("Couldn't get transform between " + self.map_frame + " and " + self.robot_frames[robot_id])
@@ -63,9 +63,11 @@ class MrdrrtCommanderNode:
         sconfigs = np.array(sconfigs)
 
         # Get path from mrdrrt - will dictionary of lists of numpy arrays
-        # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
+        print(sconfigs)
+        print(gconfigs)
+        path = self.mrdrrt.FindPath(sconfigs, gconfigs)
 
-        path = {0: [np.array([0.1, -0.05,0]), np.array([0,0,0])], 1: [np.array([-0.2, -0.05, 0]), np.array([-0.2,0.2,0])]}
+        # path = {0: [np.array([0.1, -0.05,0]), np.array([0,0,0])], 1: [np.array([-0.2, -0.05, 0]), np.array([-0.2,0.2,0])]}
 
         # Tell robots to follow their paths
         n_waypoints = len(path[0])
