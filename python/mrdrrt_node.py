@@ -42,7 +42,8 @@ class MrdrrtCommanderNode:
         print("MRdRRT commander node ready!")
 
     def GoalReachedCb(self, msg):
-        self.n_robots_done += 1
+        if msg.data == 1:
+            self.n_robots_done += 1
 
     def GetRobotPose(self, robot_id):
         try:
