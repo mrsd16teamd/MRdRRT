@@ -27,20 +27,18 @@ class MrdrrtCommanderNode:
         path = rospack.get_path('mrdrrt')
         map_path = path + '/roadmaps/' + 't_map_prm.p'
 
-        # self.prm = PRMPlanner(n_nodes=300, map_id=map_id, load=True, visualize=False, filepath=map_path)
-        # self.mrdrrt = MRdRRTPlanner(self.prm, n_robots=n_rob, visualize=False)
 
-        self.map_frame = '/map'
-
-        self.robot_namespaces = ['cozmo'+str(i) for i in range(n_rob)]
-        self.robot_frames = [self.robot_namespaces[i] + '/base_link' for i in range(n_rob)]
-        self.waypoint_pubs = [rospy.Publisher(self.robot_namespaces[i]+'/goal', PoseStamped, queue_size=3) for i in range(n_rob)]
+        prm = PRMPlanner(n_nodes=300, map_id=map_id, load=True, visualize=False, filepath=map_path)
+        self.mrdrrt = MRdRRTPlanner(prm, n_robots=n_rob, visualize=False)
 
         self.tf_listener = tf.TransformListener()
-        self.plan_serv = rospy.Service('mrdrrt_start', Trigger, self.PlanPath)
+        self.map_frame = '/map'
+        self.robot_namespaces = ['cozmo'+str(i) for i in range(n_rob)]
+        self.robot_frames = [self.robot_namespaces[i] + '/base_link' for i in range(n_rob)]
 
-        # TODO define subscriber for checking if robots are done going to waypoint
+        self.plan_serv = rospy.Service('mrdrrt_start', Trigger, self.PlanPath)
         self.robots_done_sub = rospy.Subscriber('/goal_reached', std_msgs.msg.Int8, self.GoalReachedCb, queue_size=5)
+        self.waypoint_pubs = [rospy.Publisher(self.robot_namespaces[i]+'/goal', PoseStamped, queue_size=3) for i in range(n_rob)]
 
         print("MRdRRT commander node ready!")
 
