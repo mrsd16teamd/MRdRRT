@@ -39,12 +39,12 @@ class PRMPlanner(object):
         make_simple_prm = True
 
         if make_simple_prm:
-            node_configs = [[-0.25+k*0.05, -0.05] for k in range(11)] + [[0, k*0.05] for k in range(6)]
+            node_configs = [[-0.225+k*0.075, -0.05] for k in range(6)] + [[0, -0.05+k*0.075] for k in range(5)]
             node_configs = np.array(node_configs)
             for node in node_configs:
                 node_id = self.graph.AddVertex(node)
             for id, config in enumerate(self.graph.vertices):
-                n_ids, n_configs = self.graph.GetNeighbors(id)
+                n_ids, n_configs = self.graph.GetNeighbors(id, 0.08, 3)
                 for i, n_id in enumerate(n_ids):
                     if not self.env.CollisionOnLine(config, n_configs[i]):
                         self.graph.AddEdge(id, n_id)
