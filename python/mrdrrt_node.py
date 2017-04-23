@@ -27,7 +27,6 @@ class MrdrrtCommanderNode:
         path = rospack.get_path('mrdrrt')
         map_path = path + '/roadmaps/' + 't_map_prm.p'
 
-
         prm = PRMPlanner(n_nodes=300, map_id=map_id, load=True, visualize=False, filepath=map_path)
         self.mrdrrt = MRdRRTPlanner(prm, n_robots=n_rob, visualize=False)
 
