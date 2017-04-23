@@ -173,7 +173,24 @@ class MRdRRTPlanner(object):
         """Same thing as VisualizePath, except animated from start to goal.
         Should help for noticing collisions between robots mid-path.
         """
-        pass
+        colors = ['r-', 'g-', 'b-', 'm-', 'y-']
+
+        if not pl.get_fignums():
+            self.env.InitializePlot()
+            self.prm.PlotRoadmap()
+        
+        for i in range(len(path)-1):
+            pl.close()
+            self.env.InitializePlot()
+            self.prm.PlotRoadmap()
+            for robot in range(len(path[0])):
+                robot_path = []
+                robot_path.append(path[i][robot, :])
+                robot_path.append(path[i+1][robot, :])
+                self.prm.VisualizePath(robot_path, colors[robot])
+                
+            raw_input("Check paths")
+
 
     def FindPath(self, sconfigs, gconfigs):
         """Main function for MRdRRT. Expands tree to find path from start to goal.
@@ -215,7 +232,7 @@ class MRdRRTPlanner(object):
             print("Failed to find path - hit maximum iterations.")
         else:
             if self.visualize:
-                self.VisualizePath(path)
+                self.AnimatePath(path)
 
             # At this point, path is a list of numpy arrays. Want a dictionary of list of numpy arrays
             path_dict = defaultdict(list)
