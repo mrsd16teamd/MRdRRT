@@ -61,11 +61,16 @@ class MRdRRTPlanner(object):
         # TODO clean this up, move somewhere else
         if nearest:
             nearest_config = self.implicitgraph.NodeIdsToConfigs(nearest)
-            for i in range(len(qrand)):
-                config1 = qrand[i]
+            qnear_config = self.implicitgraph.NodeIdsToConfigs(qnear)
+
+            for i in range(len(qnear)):
+                config1 = qnear_config[i]
                 config2 = nearest_config[i]
                 if self.env.CollisionOnLine(config1, config2):
                     return None
+
+            if not self.LocalConnector(qnear_config, nearest_config):
+                return None
 
         return nearest
 
@@ -156,7 +161,7 @@ class MRdRRTPlanner(object):
             for i in range(len(path)):
                 robot_path.append(path[i][robot, :])
             self.prm.VisualizePath(robot_path, colors[robot])
-        raw_input("Check paths")
+            raw_input("Check paths")
 
     def ShowStartAndGoalConfigs(self, sconfigs, gconfigs):
         colors = ['r', 'g', 'b', 'm', 'y']
@@ -181,10 +186,9 @@ class MRdRRTPlanner(object):
         self.ShowStartAndGoalConfigs(sconfigs, gconfigs)
         raw_input("Wait for start/goal configs, and enter to start planning")
 
-        for i in range(len(sconfigs)):
-            if self.env.CheckCollision(sconfigs[i]) or self.env.CheckCollision(gconfigs[i]):
-                print("Start or goal configurations are in collision.")
-                return
+        if self.env.CheckCollisionMultiple(sconfigs) or self.env.CheckCollisionMultiple(gconfigs):
+            print("Start or goal configurations are in collision.")
+            return
 
         print("Looking for a path...")
         sids = self.implicitgraph.NearestNodeInGraph(sconfigs)

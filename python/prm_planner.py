@@ -91,6 +91,8 @@ class PRMPlanner(object):
             prm_graph = pickle.load(f)
             self.graph.vertices = prm_graph['vertices']
             self.graph.edges = prm_graph['edges']
+            self.graph.flann.build_index(np.array(self.graph.vertices))
+            self.built_flann_index = True
             if self.visualize:
                 self.PlotRoadmap()
                 raw_input("Wait for plot and check roadmap.")
