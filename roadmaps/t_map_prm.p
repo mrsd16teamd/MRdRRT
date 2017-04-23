@@ -85,14 +85,12 @@ I4
 aI5
 aI7
 aI5
-aI11
 aI8
 aI4
 aI7
 aI8
 aI9
 aI10
-aI11
 asI7
 (lp13
 I6
@@ -100,11 +98,9 @@ aI6
 aI8
 aI9
 aI5
-aI11
 aI8
 aI9
 aI10
-aI12
 asI8
 (lp14
 I6
@@ -124,7 +120,6 @@ aI8
 aI10
 aI7
 aI6
-aI11
 aI10
 asI10
 (lp16
@@ -138,12 +133,8 @@ aI5
 asI11
 (lp17
 I5
-aI6
-aI7
-aI9
 aI5
 aI12
-aI6
 aI13
 aI12
 aI13
@@ -158,7 +149,6 @@ aI11
 aI13
 aI5
 aI14
-aI7
 aI13
 aI14
 aI15
