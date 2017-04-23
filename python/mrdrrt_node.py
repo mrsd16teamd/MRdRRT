@@ -55,6 +55,20 @@ class MrdrrtCommanderNode:
             print("Couldn't get transform between " + self.map_frame + " and " + self.robot_frames[robot_id])
             return False
 
+    def AddAnglesToPath(self, point_path):
+        """Post-processes path from roadmap before sending to Cozmo.
+        Add angles to path
+        For angles, just points robot towards next waypoint.
+        """
+        path_w_angles = []
+        for i, point in enumerate(point_path[0:-1]):  # First point -> second to last
+            vec2next = point_path[i+1] - point_path[i]
+            angle = np.arctan2(vec2next[1], vec2next[0])
+            config = np.append(point, angle)
+            path_w_angles.append(config)
+
+        return path_w_angles
+
     def PlanPath(self, request):
         # Find robots' starting configurations
         sconfigs = []
@@ -68,6 +82,7 @@ class MrdrrtCommanderNode:
         # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
 
         # path = {0: [np.array([0.1, -0.05,0]), np.array([0,0,0])], 1: [np.array([-0.2, -0.05, 0]), np.array([-0.2,0.2,0])]}
+
         rospack = rospkg.RosPack()
         path = rospack.get_path('mrdrrt')
         filepath = path + '/paths/tmap_path.p'
@@ -75,6 +90,12 @@ class MrdrrtCommanderNode:
             path = pickle.load(f)
         
         print(path)
+
+
+        for r in range(len(path.keys())):
+            path[r] =  self.AddAnglesToPath(path[r])
+            print path[r]
+
         # Tell robots to follow their paths
         n_waypoints = len(path[0])
         for t in range(n_waypoints):
