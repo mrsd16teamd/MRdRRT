@@ -29,7 +29,7 @@ class PRMPlannerNode(object):
 
         rospack = rospkg.RosPack()
         path = rospack.get_path('mrdrrt')
-        map_path = path + '/roadmaps/' + 't_map_prm.p'
+        map_path = path + '/roadmaps/t_map_prm.p'
 
         self.prm = PRMPlanner(n_nodes=300, map_id=map_id, load=True, visualize=False, filepath = map_path)
 

@@ -26,9 +26,6 @@ class PRMPlanner(object):
                 filepath = '../roadmaps/cube_center.p'
             elif map_id == 2 and filepath is None:
                 filepath = '../roadmaps/t_map_prm.p'
-            else:
-                print("Enter a valid map ID.", map_id, filepath)
-                sys.exit()
             self.LoadRoadmap(filepath)
         else:
             input("Hit enter to generate and save new roadmap.")
@@ -91,7 +88,7 @@ class PRMPlanner(object):
         """Loads pickle with pre-made roadmap."""
         print("Loading roadmap.")
         with open(filepath, 'rb') as f:
-            prm_graph = pickle.load(f, fix_imports=True, encoding="ascii", errors="strict")
+            prm_graph = pickle.load(f)
             self.graph.vertices = prm_graph['vertices']
             self.graph.edges = prm_graph['edges']
             if self.visualize:
