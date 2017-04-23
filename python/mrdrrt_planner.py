@@ -28,7 +28,7 @@ class MRdRRTPlanner(object):
         self.env = prm.env
         self.implicitgraph = ImplicitGraph(self.env, prm, n_robots)
         self.tree = Tree(self.env, self.implicitgraph)
-        self.max_iter = 500
+        self.max_iter = 2500
         self.prm = prm  # Here just for VisualizePlot
         self.visualize = visualize
 
@@ -224,7 +224,7 @@ class MRdRRTPlanner(object):
                 path = self.ConstructPath(nid, sconfigs, gconfigs, sids, gids)
                 break
 
-            if(i % 10 == 0):
+            if(i % 50 == 0):
                 print(str(i) + "th iteration")
             i += 1
             # print('-------')

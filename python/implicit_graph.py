@@ -117,6 +117,6 @@ class ImplicitGraph(object):
             nn_id, _ = self.roadmap.flann.nn(np.array(dataset), qrand[i], 1)
             nearest += (neighbors_of_each[nn_id[0]],)
 
-        print nearest
+        # print nearest
 
         return nearest
