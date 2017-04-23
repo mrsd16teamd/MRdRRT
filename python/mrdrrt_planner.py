@@ -187,7 +187,7 @@ class MRdRRTPlanner(object):
                 robot_path = []
                 robot_path.append(path[i][robot, :])
                 robot_path.append(path[i+1][robot, :])
-                self.prm.AnimatePath(robot_path, colors[robot])
+                self.prm.VisualizePath(robot_path, colors[robot])
                 
             raw_input("Check paths")
 
