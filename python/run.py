@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
+import cPickle as pickle
 
 # from simple_robot import SimpleRobot
 from simple_environment import SimpleEnvironment
@@ -29,8 +30,11 @@ def main():
 
     if test == 3:
         # Test 2 robots in T map
-        sconfigs = np.array([[-0.25, -0.05], [0.15, -0.05]])
-        gconfigs = np.array([[0.25, -0.05], [-0.15, -0.05]])
+        # sconfigs = np.array([[-0.25, -0.05], [0.25, -0.05]])
+        # gconfigs = np.array([[0.15, -0.05], [-0.15, -0.05]])
+
+        sconfigs = np.array([[-0.13900678, -0.05191908], [ 0.15983319, -0.05612765]])
+        gconfigs = np.array([[ 0.2,  -0.05], [-0.2,  -0.05]])
 
     if test == 4:
         # Test 3 robots in T map
@@ -50,6 +54,13 @@ def main():
     mrdrrt = MRdRRTPlanner(prm, n_robots=sconfigs.shape[0], visualize=True)
     path = mrdrrt.FindPath(sconfigs, gconfigs)
     print(path)
+
+    mrdrrt_path = dict()
+    mrdrrt_path['path'] = path
+    filepath = '../paths/tmap_path.p'
+    with open(filepath, "wb") as f:
+        pickle.dump(mrdrrt_path, f)
+        print("Saved MRdRRT path.")
 
 if __name__ == "__main__":
     main()

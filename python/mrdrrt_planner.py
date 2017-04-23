@@ -28,7 +28,7 @@ class MRdRRTPlanner(object):
         self.env = prm.env
         self.implicitgraph = ImplicitGraph(self.env, prm, n_robots)
         self.tree = Tree(self.env, self.implicitgraph)
-        self.max_iter = 500
+        self.max_iter = 2500
         self.prm = prm  # Here just for VisualizePlot
         self.visualize = visualize
 
@@ -53,9 +53,10 @@ class MRdRRTPlanner(object):
         return qnew, a neighbor of qnear on the implicit graph that hasn't been
         explored yet, and is closest (by sum of euclidean distances) to qnear.
         """
-        neighbors = self.implicitgraph.GetNeighbors(qnear)
-
-        min_dist, nearest = self.FindClosestToConfig(qrand, neighbors)
+        # neighbors = self.implicitgraph.GetNeighbors(qnear)
+        #
+        # min_dist, nearest = self.FindClosestToConfig(qrand, neighbors)
+        nearest = self.implicitgraph.GetClosestCompositeNeighbor(qnear,qrand)
 
         # check collision between qnear and nearest node
         # TODO clean this up, move somewhere else
@@ -173,7 +174,24 @@ class MRdRRTPlanner(object):
         """Same thing as VisualizePath, except animated from start to goal.
         Should help for noticing collisions between robots mid-path.
         """
-        pass
+        colors = ['r-', 'g-', 'b-', 'm-', 'y-']
+
+        if not pl.get_fignums():
+            self.env.InitializePlot()
+            self.prm.PlotRoadmap()
+
+        for i in range(len(path)-1):
+            pl.close()
+            self.env.InitializePlot()
+            self.prm.PlotRoadmap()
+            for robot in range(len(path[0])):
+                robot_path = []
+                robot_path.append(path[i][robot, :])
+                robot_path.append(path[i+1][robot, :])
+                self.prm.VisualizePath(robot_path, colors[robot])
+
+            raw_input("Check paths")
+
 
     def FindPath(self, sconfigs, gconfigs):
         """Main function for MRdRRT. Expands tree to find path from start to goal.
@@ -206,7 +224,7 @@ class MRdRRTPlanner(object):
                 path = self.ConstructPath(nid, sconfigs, gconfigs, sids, gids)
                 break
 
-            if(i % 10 == 0):
+            if(i % 50 == 0):
                 print(str(i) + "th iteration")
             i += 1
             # print('-------')
@@ -215,7 +233,7 @@ class MRdRRTPlanner(object):
             print("Failed to find path - hit maximum iterations.")
         else:
             if self.visualize:
-                self.VisualizePath(path)
+                self.AnimatePath(path)
 
             # At this point, path is a list of numpy arrays. Want a dictionary of list of numpy arrays
             path_dict = defaultdict(list)
