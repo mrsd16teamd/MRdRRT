@@ -15,7 +15,7 @@ import numpy as np
 from time import sleep
 from prm_planner import PRMPlanner
 from mrdrrt_planner import MRdRRTPlanner
-
+import cPickle as pickle
 
 n_rob = 2
 gconfigs = np.array([[0.2, -0.05], [-0.2, -0.05]]) #hard-coded goal configs, for now
@@ -37,7 +37,7 @@ class MrdrrtCommanderNode:
 
         self.plan_serv = rospy.Service('mrdrrt_start', Trigger, self.PlanPath)
         self.robots_done_sub = rospy.Subscriber('/goal_reached', std_msgs.msg.Int8, self.GoalReachedCb, queue_size=5)
-        self.waypoint_pubs = [rospy.Publisher(self.robot_namespaces[i]+'/goal', PoseStamped, queue_size=3) for i in range(n_rob)]
+        self.waypoint_pubs = [rospy.Publisher(self.robot_namespaces[i]+'/goal', PoseStamped, queue_size=3) for i in range(n_rob)]   
 
         print("MRdRRT commander node ready!")
 
@@ -65,10 +65,16 @@ class MrdrrtCommanderNode:
         # Get path from mrdrrt - will dictionary of lists of numpy arrays
         print(sconfigs)
         print(gconfigs)
-        path = self.mrdrrt.FindPath(sconfigs, gconfigs)
+        # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
 
         # path = {0: [np.array([0.1, -0.05,0]), np.array([0,0,0])], 1: [np.array([-0.2, -0.05, 0]), np.array([-0.2,0.2,0])]}
-
+        rospack = rospkg.RosPack()
+        path = rospack.get_path('mrdrrt')
+        filepath = path + '/paths/tmap_path.p'
+        with open(filepath, 'rb') as f:
+            path = pickle.load(f)
+        
+        print(path)
         # Tell robots to follow their paths
         n_waypoints = len(path[0])
         for t in range(n_waypoints):
