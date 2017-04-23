@@ -79,8 +79,8 @@ class MrdrrtCommanderNode:
         # Get path from mrdrrt - will dictionary of lists of numpy arrays
         print(sconfigs)
         print(gconfigs)
-        # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
 
+        # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
         # path = {0: [np.array([0.1, -0.05,0]), np.array([0,0,0])], 1: [np.array([-0.2, -0.05, 0]), np.array([-0.2,0.2,0])]}
 
         rospack = rospkg.RosPack()
@@ -89,18 +89,20 @@ class MrdrrtCommanderNode:
         with open(filepath, 'rb') as f:
             path = pickle.load(f)
         
-        print(path)
+        # print(path)
 
-
+        print("num_robots:{}",format(len(path.keys())))
         for r in range(len(path.keys())):
             path[r] =  self.AddAnglesToPath(path[r])
-            print path[r]
+            # print path[r]
 
         # Tell robots to follow their paths
         n_waypoints = len(path[0])
+        print("n_waypoints:{}",format(n_waypoints))
         for t in range(n_waypoints):
-            # Send robot their waypoints
+            print("Sending waypoints for step {}".format(t))
             for r in range(n_rob):
+                # print("Robot {}, go!".format(r))
                 pose_msg = PoseStamped()
                 pose_msg.pose.position.x, pose_msg.pose.position.y = path[r][t][0], path[r][t][1]
 
@@ -112,9 +114,10 @@ class MrdrrtCommanderNode:
             # Wait for them to finish
             self.n_robots_done = 0
             while self.n_robots_done is not n_rob:
-                sleep(1)
-            print("All robots done with their waypoints.")
-
+                print("waiting for robots to reach")
+                sleep(3)
+            print("All robots done with step {}".format(t))
+        print("All paths completed")
 
 if __name__ == '__main__':
     rospy.init_node('mrdrrt_commander_node', anonymous=True)
