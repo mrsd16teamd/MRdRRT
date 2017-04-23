@@ -11,6 +11,7 @@ import nav_msgs.msg
 from geometry_msgs.msg import (Twist, TransformStamped, PoseStamped)
 
 import numpy as np
+from time import sleep
 from prm_planner import PRMPlanner
 from mrdrrt_planner import MRdRRTPlanner
 
@@ -38,8 +39,10 @@ class MrdrrtCommanderNode:
         self.plan_serv = rospy.Service('mrdrrt_start', Empty, self.PlanPath)
 
         # TODO define subscriber for checking if robots are done going to waypoint
-        self.robots_done = rospy.Subscriber('/goal_reached', std_msgs.msg.Int8, queue_size=5)
+        self.robots_done_sub = rospy.Subscriber('/goal_reached', std_msgs.msg.Int8, self.GoalReachedCb, queue_size=5)
 
+    def GoalReachedCb(self, msg):
+        self.n_robots_done += 1
 
     def GetRobotPose(self, robot_id):
         try:
@@ -61,5 +64,25 @@ class MrdrrtCommanderNode:
 
         # Get path from mrdrrt - will dictionary of lists of numpy arrays
         path = self.mrdrrt.FindPath(sconfigs, gconfigs)
+
+        # Tell robots to follow their paths
+        n_waypoints = len(path[0])
+        for t in range(n_waypoints):
+            # Send robot their waypoints
+            for r in range(n_rob):
+                pose_msg = PoseStamped()
+                pose_msg.pose.position.x, pose_msg.pose.position.y = config[0], config[1]
+
+                quat = tf.transformations.quaternion_from_euler(0, 0, config[2])
+                pose_msg.pose.orientation.x, pose_msg.pose.orientation.y, pose_msg.pose.orientation.z, pose_msg.pose.orientation.w = quat[0], quat[1], quat[2], quat[3]
+                
+                self.waypoint_pubs[r].publish(pose_msg)
+
+            # Wait for them to finish
+            self.n_robots_done = 0
+            while self.n_robots_done is not n_rob:
+                sleep(1)
+            print("All robots done with their waypoints.")
+
 
 

@@ -87,7 +87,7 @@ class PRMPlannerNode(object):
             print("Path: ")
             for config in prm_path[1:]: #ignore first node in path; it's the start config
                 pose = PoseStamped()
-                pose.pose.position.x, pose.pose.position.y = config[0], config[1]#prm plans in cm
+                pose.pose.position.x, pose.pose.position.y = config[0], config[1]
 
                 quat = tf.transformations.quaternion_from_euler(0, 0, config[2])
                 pose.pose.orientation.x, pose.pose.orientation.y, pose.pose.orientation.z, pose.pose.orientation.w = quat[0], quat[1], quat[2], quat[3]
