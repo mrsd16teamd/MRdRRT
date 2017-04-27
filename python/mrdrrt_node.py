@@ -81,16 +81,21 @@ class MrdrrtCommanderNode:
         print("Start Configs:\n{}".format(sconfigs))
         print("Goal Configs:\n{}".format(gconfigs))
 
+        ### Find path 
         # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
-        # path = {0: [np.array([0.1, -0.05,0]), np.array([0,0,0])], 1: [np.array([-0.2, -0.05, 0]), np.array([-0.2,0.2,0])]}
 
-        rospack = rospkg.RosPack()
-        path = rospack.get_path('mrdrrt')
-        filepath = path + '/paths/tmap_path2.p'
-        with open(filepath, 'rb') as f:
-            path = pickle.load(f)
+        ### Manually constructed path
+        path = {0: [np.array([0.1, -0.05, np.pi]), np.array([0,0,np.pi/2]), np.array([0, 0.1, -np.pi/2]), np.array(0, 0, np.pi), np.array([-0.1, -0.05, 0])] , 
+                1: [np.array([-0.1, -0.05, 0]), np.array([-0.1,0.05,0]), np.array(0.1, -0.05, np.pi), np.array(0.1, -0.05, np.pi), np.array(0.1, -0.05, np.pi)]}
+
+        ### Load path from pickle
+        # rospack = rospkg.RosPack()
+        # path = rospack.get_path('mrdrrt')
+        # filepath = path + '/paths/tmap_path2.p'
+        # with open(filepath, 'rb') as f:
+        #     path = pickle.load(f)
         
-        # print(path)
+        print('Path: ', path)
 
         print("num_robots:{}",format(len(path.keys())))
         for r in range(len(path.keys())):
@@ -116,7 +121,7 @@ class MrdrrtCommanderNode:
             # Wait for them to finish
             self.n_robots_done = 0
             while self.n_robots_done is not n_rob:
-                print("waiting for robots to reach")
+                print("Waiting for robots to reach their waypoints")
                 sleep(3)
             print("All robots done with step {}".format(t))
         print("All paths completed")
