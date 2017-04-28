@@ -72,21 +72,17 @@ class MrdrrtCommanderNode:
 
     def PlanPath(self, request):
         # Find robots' starting configurations
-        sconfigs = []
-        for i in range(n_rob):
-            sconfigs.append(self.GetRobotPose(i))
-        sconfigs = np.array(sconfigs)
+        # sconfigs = []
+        # for i in range(n_rob):
+        #     sconfigs.append(self.GetRobotPose(i))
+        # sconfigs = np.array(sconfigs)
 
-        # Get path from mrdrrt - will dictionary of lists of numpy arrays
-        print("Start Configs:\n{}".format(sconfigs))
-        print("Goal Configs:\n{}".format(gconfigs))
+        # # Get path from mrdrrt - will dictionary of lists of numpy arrays
+        # print("Start Configs:\n{}".format(sconfigs))
+        # print("Goal Configs:\n{}".format(gconfigs))
 
         ### Find path 
         # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
-
-        ### Manually constructed path
-        path = {0: [np.array([0.1, -0.05, np.pi]), np.array([0,0,np.pi/2]), np.array([0, 0.1, -np.pi/2]), np.array(0, 0, np.pi), np.array([-0.1, -0.05, 0])] , 
-                1: [np.array([-0.1, -0.05, 0]), np.array([-0.1,0.05,0]), np.array(0.1, -0.05, np.pi), np.array(0.1, -0.05, np.pi), np.array(0.1, -0.05, np.pi)]}
 
         ### Load path from pickle
         # rospack = rospkg.RosPack()
@@ -95,14 +91,22 @@ class MrdrrtCommanderNode:
         # with open(filepath, 'rb') as f:
         #     path = pickle.load(f)
         
-        print('Path: ', path)
 
-        print("num_robots:{}",format(len(path.keys())))
-        for r in range(len(path.keys())):
-            path[r] =  self.AddAnglesToPath(path[r])
+        # print("num_robots:{}",format(len(path.keys())))
+        # for r in range(len(path.keys())):
+        #     path[r] =  self.AddAnglesToPath(path[r])
             # print path[r]
 
+        ### Manually constructed path
+        path = {0: [np.array([0.17, -0.05, np.pi]), np.array([0,-0.05,np.pi/2]), np.array([0, 0.17, -np.pi/2]), np.array([0, -0.05, np.pi]), np.array([-0.17, -0.05, 0])] , 
+                1: [np.array([-0.17, -0.05, 0]), np.array([-0.17,-0.05,0]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi])]}
+
+        print('Path: ', path)
+
+
         # Tell robots to follow their paths
+
+        update_rate = rospy.Rate(1)
         n_waypoints = len(path[0])
         print("n_waypoints:{}",format(n_waypoints))
         for t in range(n_waypoints):
@@ -122,7 +126,7 @@ class MrdrrtCommanderNode:
             self.n_robots_done = 0
             while self.n_robots_done is not n_rob:
                 print("Waiting for robots to reach their waypoints")
-                sleep(3)
+                update_rate.sleep()
             print("All robots done with step {}".format(t))
         print("All paths completed")
 
