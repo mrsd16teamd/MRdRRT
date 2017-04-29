@@ -106,7 +106,7 @@ class MrdrrtCommanderNode:
 
         # Tell robots to follow their paths
 
-        update_rate = rospy.Rate(1)
+        update_rate = rospy.Rate(1) #tried slowing this down to give more buffer, but doesn't really help if the delay is in between steps
         n_waypoints = len(path[0])
         print("n_waypoints:{}",format(n_waypoints))
         for t in range(n_waypoints):
@@ -122,10 +122,10 @@ class MrdrrtCommanderNode:
                 
                 self.waypoint_pubs[r].publish(pose_msg)
 
-            # Wait for them to finish
+                # Wait for them to finish
             self.n_robots_done = 0
             while self.n_robots_done is not n_rob:
-                print("Waiting for robots to reach their waypoints")
+                print("Waiting for robots to finish their waypoint")
                 update_rate.sleep()
             print("All robots done with step {}".format(t))
         print("All paths completed")
