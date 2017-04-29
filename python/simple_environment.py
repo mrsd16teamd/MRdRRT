@@ -117,7 +117,7 @@ class SimpleEnvironment(object):
         #     if self.CheckCollision(check_state):
         #         print("collision")
         #         return True
-        
+
         return False
 
     ############## Plotting stuff #################
