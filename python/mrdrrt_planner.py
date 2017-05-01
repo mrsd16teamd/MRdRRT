@@ -28,7 +28,7 @@ class MRdRRTPlanner(object):
         self.env = prm.env
         self.implicitgraph = ImplicitGraph(self.env, prm, n_robots)
         self.tree = Tree(self.env, self.implicitgraph)
-        self.max_iter = 2500
+        self.max_iter = 5000
         self.prm = prm  # Here just for VisualizePlot
         self.visualize = visualize
 
@@ -162,6 +162,7 @@ class MRdRRTPlanner(object):
             for i in range(len(path)):
                 robot_path.append(path[i][robot, :])
             self.prm.VisualizePath(robot_path, colors[robot])
+
             raw_input("Check paths")
 
     def ShowStartAndGoalConfigs(self, sconfigs, gconfigs):
@@ -180,6 +181,7 @@ class MRdRRTPlanner(object):
             self.env.InitializePlot()
             self.prm.PlotRoadmap()
 
+        print('Path length is %d',len(path))
         for i in range(len(path)-1):
             pl.close()
             self.env.InitializePlot()
@@ -189,8 +191,10 @@ class MRdRRTPlanner(object):
                 robot_path.append(path[i][robot, :])
                 robot_path.append(path[i+1][robot, :])
                 self.prm.VisualizePath(robot_path, colors[robot])
-
-            raw_input("Check paths")
+            fname = 'MRdRRT_path_' + str(i)
+            print('Path step #%d',i)
+            pl.savefig(fname)
+            # raw_input("Check paths")
 
 
     def FindPath(self, sconfigs, gconfigs):

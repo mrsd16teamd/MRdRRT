@@ -42,16 +42,16 @@ class PRMPlanner(object):
             # node_configs = np.array([[-0.225+k*0.075, -0.05] for k in range(6)] + [[0, -0.05+k*0.075] for k in range(5)]) # 7.5cm resolution
             # node_configs = np.array([[-0.28+k*0.14, -0.05] for k in range(5)] + [[0, -0.05+k*0.14] for k in range(3)]) # 14cm resolution
             # node_configs = np.array([[-0.14+k*0.14, -0.05] for k in range(3)] + [[0, -0.05+k*0.14] for k in range(3)]) # 14cm resolution
-            # node_configs = np.array([[-0.30, -0.05], [-0.15, -0.05], [0.0, -0.05], [0.15, -0.05], [0.30, -0.05], [0, 0.15], [0, 0.30]])
+            node_configs = np.array([[-0.30, -0.05], [-0.15, -0.05], [0.0, -0.05], [0.15, -0.05], [0.30, -0.05], [0, 0.15], [0, 0.30]])
 
-            node_configs = np.array([[-0.15, -0.05], [0.0, -0.05], [0.15, -0.05], [0.0, 0.15]])
+            # node_configs = np.array([[-0.15, -0.05], [0.0, -0.05], [0.15, -0.05], [0.0, 0.15]])
 
             for node in node_configs:
                 node_id = self.graph.AddVertex(node)
 
-            edges = [(0,0), (0,1), (1,0), (1,1), (1,2), (1,3), (2,1), (2,2), (3,1), (3,3)]
-            for e in edges:
-                self.graph.AddEdge(e[0], e[1])
+            # edges = [(0,0), (0,1), (1,0), (1,1), (1,2), (1,3), (2,1), (2,2), (3,1), (3,3)]
+            # for e in edges:
+            #     self.graph.AddEdge(e[0], e[1])
 
             # for id, config in enumerate(self.graph.vertices):
             #     n_ids, n_configs = self.graph.GetNeighbors(id, 0.20, 3)
@@ -59,10 +59,10 @@ class PRMPlanner(object):
             #         if not self.env.CollisionOnLine(config, n_configs[i]):
             #             self.graph.AddEdge(id, n_id)
 
-            # for i, config_i in enumerate(self.graph.vertices):
-            #     for j, config_j in enumerate(self.graph.vertices):
-            #         if not self.env.CollisionOnLine(config_i, config_j):
-            #             self.graph.AddEdge(i, j)
+            for i, config_i in enumerate(self.graph.vertices):
+                for j, config_j in enumerate(self.graph.vertices):
+                    if not self.env.CollisionOnLine(config_i, config_j):
+                        self.graph.AddEdge(i, j)
 
         else:
             while (len(self.graph.vertices) < self.n_nodes):

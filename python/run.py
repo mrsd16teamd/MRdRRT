@@ -16,7 +16,7 @@ def main():
     # Map IDs: 1=cube center, 2=T
     prm = PRMPlanner(n_nodes=300, map_id=2, load=False, visualize=True)
 
-    test = 3
+    test = 4
 
     if test == 1:
         # Test 1 robot in cube map
@@ -39,7 +39,7 @@ def main():
     if test == 4:
         # Test 3 robots in T map
         sconfigs = np.array([[-0.25, -0.05], [0.25, -0.05], [0, 0.25]])
-        gconfigs = np.array([[0.25, -0.05], [0, 0.25], [-0.25, -0.05]])
+        gconfigs = np.array([[0.30, -0.05], [0, 0.30], [-0.30, -0.05]])
 
     if test == 5:
         # Test 4 robots in T map
