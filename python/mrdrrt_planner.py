@@ -11,6 +11,9 @@ from implicit_graph import ImplicitGraph
 from profile_utils import timefunc
 from collections import defaultdict
 
+import cPickle as pickle
+import random
+
 
 class MRdRRTPlanner(object):
     """Multi-robot discrete RRT algorithm for coordinated centralized planning.
@@ -57,6 +60,7 @@ class MRdRRTPlanner(object):
         #
         # min_dist, nearest = self.FindClosestToConfig(qrand, neighbors)
         nearest = self.implicitgraph.GetClosestCompositeNeighbor(qnear,qrand)
+        print "nearest: ", nearest
 
         # check collision between qnear and nearest node
         # TODO clean this up, move somewhere else
@@ -68,24 +72,37 @@ class MRdRRTPlanner(object):
                 config1 = qnear_config[i]
                 config2 = nearest_config[i]
                 if self.env.CollisionOnLine(config1, config2):
+                    print "collision"
                     return None
 
             if not self.LocalConnector(qnear_config, nearest_config):
+                print "collision"
                 return None
 
         return nearest
 
     @timefunc
-    def Expand(self):
+    def Expand(self, gconfigs):
         """Takes random sample and tries to expand tree in direction of sample.
         """
-        qrand = self.implicitgraph.RandomSample()
+        if random.random() > 0.3:
+            qrand = self.implicitgraph.RandomSample()
+        else:
+            qrand = gconfigs
         qnear, near_id = self.tree.NearestNeighbors(qrand, 1)
+        print "qrand: ", qrand
+        print "qnear: ", qnear
 
         qnew = self.Oracle(qnear, qrand)
+        print "qnew: ", qnew
+
         if (qnew is not None and qnew not in self.tree.vertices):
             new_id = self.tree.AddVertex(qnew)
             self.tree.AddEdge(near_id, new_id)
+
+        print "tree edges: ", self.tree.edges
+        print "tree vertices: ", self.tree.vertices
+        # raw_input(".")
 
     @timefunc
     def LocalConnector(self, config1, config2):
@@ -120,6 +137,7 @@ class MRdRRTPlanner(object):
         # Actually, how important is this?
         # Only checking closest node right now because that's all nearestneighbors does
         # for q in self.tree.NearestNeighbors(goal,1):
+
         g_config = self.implicitgraph.NodeIdsToConfigs(gids)
         neighbor, nid = self.tree.NearestNeighbors(g_config, 1)
         n_config = self.implicitgraph.NodeIdsToConfigs(neighbor)
@@ -192,9 +210,14 @@ class MRdRRTPlanner(object):
                 robot_path.append(path[i+1][robot, :])
                 self.prm.VisualizePath(robot_path, colors[robot])
             fname = 'MRdRRT_path_' + str(i)
-            print('Path step #%d',i)
+            print 'Path step #', i
             pl.savefig(fname)
+            raw_input(".")
             # raw_input("Check paths")
+
+        with open('most_recent_path.p', "wb") as f:
+            pickle.dump(path, f)
+            print "saved path!"
 
 
     def FindPath(self, sconfigs, gconfigs):
@@ -204,8 +227,6 @@ class MRdRRTPlanner(object):
         if len(sconfigs) != len(gconfigs):
             print("Start and goal configurations don't match in length")
             return
-
-        import IPython; IPython.embed()
 
         self.ShowStartAndGoalConfigs(sconfigs, gconfigs)
         raw_input("Wait for start/goal configs, and enter to start planning")
@@ -228,7 +249,7 @@ class MRdRRTPlanner(object):
 
         i = 0
         while (i < self.max_iter):
-            self.Expand()
+            self.Expand(gconfigs)
             success, nid = self.ConnectToTarget(gids)
             if success:
                 print("Found a path! Constructing final path now..")

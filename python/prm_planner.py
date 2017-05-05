@@ -26,6 +26,8 @@ class PRMPlanner(object):
                 filepath = '../roadmaps/cube_center.p'
             elif map_id == 2 and filepath is None:
                 filepath = '../roadmaps/t_map_simple.p'
+            elif map_id == 3 and filepath is None:
+                filepath = '../roadmaps/t_map_4node.p'
             self.LoadRoadmap(filepath)
         else:
             raw_input("Hit enter to generate and save new roadmap.")
@@ -76,8 +78,6 @@ class PRMPlanner(object):
                     if not self.env.CollisionOnLine(qnew, n_configs[i]):
                         self.graph.AddEdge(new_id, n_id)
 
-        self.graph.flann.build_index(np.array(self.graph.vertices))
-        self.graph.built_flann_index = True
 
         if self.visualize:
             self.PlotRoadmap()
@@ -106,8 +106,8 @@ class PRMPlanner(object):
             prm_graph = pickle.load(f)
             self.graph.vertices = prm_graph['vertices']
             self.graph.edges = prm_graph['edges']
-            self.graph.flann.build_index(np.array(self.graph.vertices))
-            self.built_flann_index = True
+            print self.graph.vertices
+            print self.graph.edges
             if self.visualize:
                 self.PlotRoadmap()
                 raw_input("Wait for plot and check roadmap.")

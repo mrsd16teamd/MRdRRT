@@ -150,7 +150,7 @@ class SimpleEnvironment(object):
 
             self.obstacles.append(self.ExpandObstacle(cube1))
 
-        if self.map_id == 2:        # T-MAP
+        if self.map_id == 2 or self.map_id == 3:        # T-MAP
             box1 = np.array([[-0.30, -0.30], [0.30, -0.30], [0.30, -0.10], [-0.30, -0.10]])
             box2 = np.array([[-0.30, 0], [-0.05, 0], [-0.05, 0.30], [-0.30, 0.30]])
             box3 = np.array([[0.05, 0], [0.30, 0], [0.30, 0.30], [0.05, 0.30]])

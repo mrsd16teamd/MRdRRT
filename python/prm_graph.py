@@ -1,7 +1,7 @@
 import operator
-import pyflann
 import numpy as np
 from collections import defaultdict
+
 
 class Graph(object):
     """Graph structure with adjacency list representation for PRM."""
@@ -10,9 +10,6 @@ class Graph(object):
         self.vertices = []
         self.edges = defaultdict(list)
         self.env = planning_env
-        self.flann = pyflann.FLANN()
-        pyflann.set_distance_type('euclidean')
-        self.built_flann_index = False
 
     def AddVertex(self, config):
         """Add vertex to list of nodes."""
@@ -24,47 +21,34 @@ class Graph(object):
         """Add edge to adjacency list of both nodes."""
         self.edges[eid].append(sid)
         self.edges[sid].append(eid)
-
-    def GetNeighbors(self, node_id, neighbor_dist_thres=0.05, max_neighbors=6):
-        """Given node ID, retunrs the node ID of closest nodes on roadmap."""
-
-        neighbor_ids = []
-        neighbor_configs = []
-
-        if len(self.vertices) > 2:
-            test_config = self.vertices[node_id]
-            max_neighbors = min(len(self.vertices), max_neighbors)
-
-            if self.built_flann_index:
-                nn_ids, dists = self.flann.nn_index(test_config, max_neighbors)
-            else:
-                nn_ids, dists = self.flann.nn(np.array(self.vertices), test_config, max_neighbors)
-
-            nn_ids = (nn_ids.squeeze()).tolist()
-            dists = (dists.squeeze()).tolist()
-
-            for i, neighbor_id in enumerate(nn_ids):
-                if dists[i] < neighbor_dist_thres  and dists[i] > 0.0:
-                    neighbor_configs.append(self.vertices[neighbor_id])
-                    neighbor_ids.append(neighbor_id)
-
-        return neighbor_ids, neighbor_configs
+   
+    # def GetNeighbors(self, node_id, neighbor_dist_thres=0.05, max_neighbors=6):
+    #     """Given node ID, returns the node ID of closest nodes on roadmap."""
+    #
+    #     neighbor_ids = []
+    #     neighbor_configs = []
+    #
+    #
+    #     return neighbor_ids, neighbor_configs
 
     def GetNearestNode(self, config):
-        """Returns vid of nearest node in graph"""
-
-        if self.built_flann_index:
-            nn_ids, _ = self.flann.nn_index(config, 2)
-        else:
-            nn_ids, _ = self.flann.nn(np.array(self.vertices), config, 2)
-
-        nn_ids = (nn_ids.squeeze()).tolist()
-        min_id = nn_ids[1]
-
+        """
+        Returns vid of nearest node in graph. config is np array
+        """
+        min_dist = 9999
+        min_id = 0
+        for i, v in enumerate(self.vertices):
+            dist = self.env.ComputeDistance(config, v)
+            if dist < min_dist:
+                min_dist = dist
+                min_id = i
         return min_id
 
     def FindMinDistNode(self, node_set, dist):
-        """Utility for Djikstra - finds node ID to be explored next"""
+        """
+        Utility for Djikstra - finds node ID to be explored next
+        TODO remove redundancy between this and GetNearestNode
+        """
         min_dist = 9999
         min_id = node_set[0]
         for node in node_set:
