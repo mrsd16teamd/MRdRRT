@@ -25,7 +25,7 @@ class PRMPlanner(object):
             if map_id == 1 and filepath is None:
                 filepath = '../roadmaps/cube_center.p'
             elif map_id == 2 and filepath is None:
-                filepath = '../roadmaps/t_map_prm.p'
+                filepath = '../roadmaps/t_map_simple.p'
             self.LoadRoadmap(filepath)
         else:
             raw_input("Hit enter to generate and save new roadmap.")
@@ -91,7 +91,7 @@ class PRMPlanner(object):
         if self.map_id == 1:
             filepath = '../roadmaps/cube_center.p'
         elif self.map_id == 2:
-            filepath = '../roadmaps/t_map_prm.p'
+            filepath = '../roadmaps/t_map_simple.p'
         else:
             print("Enter a valid map ID.")
             sys.exit()

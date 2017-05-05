@@ -205,6 +205,8 @@ class MRdRRTPlanner(object):
             print("Start and goal configurations don't match in length")
             return
 
+        import IPython; IPython.embed()
+
         self.ShowStartAndGoalConfigs(sconfigs, gconfigs)
         raw_input("Wait for start/goal configs, and enter to start planning")
 
@@ -215,6 +217,11 @@ class MRdRRTPlanner(object):
         print("Looking for a path...")
         sids = self.implicitgraph.NearestNodeInGraph(sconfigs)
         gids = self.implicitgraph.NearestNodeInGraph(gconfigs)
+
+        sconfigs2 = self.implicitgraph.NodeIdsToConfigs(sids)
+        gconfigs2 = self.implicitgraph.NodeIdsToConfigs(gids)
+        self.ShowStartAndGoalConfigs(sconfigs2, gconfigs2)
+        raw_input("Showing nearest nodes")
 
         # Put start config in tree
         self.tree.AddVertex(sids)

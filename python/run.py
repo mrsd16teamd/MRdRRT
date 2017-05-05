@@ -14,7 +14,7 @@ from mrdrrt_planner import MRdRRTPlanner
 def main():
     print("Starting...")
     # Map IDs: 1=cube center, 2=T
-    prm = PRMPlanner(n_nodes=300, map_id=2, load=False, visualize=True)
+    prm = PRMPlanner(n_nodes=300, map_id=2, load=True, visualize=True)
 
     test = 4
 
