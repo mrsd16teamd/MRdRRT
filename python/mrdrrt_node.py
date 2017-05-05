@@ -101,6 +101,13 @@ class MrdrrtCommanderNode:
         path = {0: [np.array([0.17, -0.05, np.pi]), np.array([0,-0.05,np.pi/2]), np.array([0, 0.17, -np.pi/2]), np.array([0, -0.05, np.pi]), np.array([-0.17, -0.05, 0])] , 
                 1: [np.array([-0.17, -0.05, 0]), np.array([-0.17,-0.05,0]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi])]}
 
+        # path = {0: [np.array([-0.17, -0.05, 0]),    np.array([0,-0.05,np.pi/2]),    np.array([0, 0.17, -np.pi/2]),  np.array([0, 0.17, -np.pi/2]), np.array([0,-0.05,np.pi]),
+        #             np.array([-0.17, -0.05, 0]),    np.array([-0.17, -0.05, 0]),    np.array([-0.17, -0.05, 0]),    np.array([0, -0.05, 0]),       np.array([0,0.17,np.pi/2])],
+        #         1: [np.array([0, 0.17, -np.pi/2]),  np.array([0, 0.17, np.pi/2]),   np.array([0, 0.34, -np.pi/2]),  np.array([0, 0.34, -np.pi/2]), np.array([0, 0.34, -np.pi/2]),
+        #             np.array([0, 0.34, -np.pi/2]),  np.array([0,-0.05,0]),          np.array([0.17,-0.05,np.pi]),   np.array([0.17,-0.05,np.pi]),  np.array([0.17,-0.05,np.pi])],
+        #         2: [np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi]), np.array([-0.17, -0.05, 0]),   np.array([-0.34, -0.05, 0]), 
+        #             np.array([-0.34, -0.05, 0]),    np.array([-0.34, -0.05, 0]),    np.array([-0.34, -0.05, 0]),    np.array([-0.34, -0.05, 0]),   np.array([-0.17, -0.05, 0])] }
+
         print('Path: ', path)
 
 
