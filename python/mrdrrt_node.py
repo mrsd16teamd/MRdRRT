@@ -17,9 +17,9 @@ from prm_planner import PRMPlanner
 from mrdrrt_planner import MRdRRTPlanner
 import cPickle as pickle
 
-n_rob = 2
-gconfigs = np.array([[0.2, -0.05], [-0.2, -0.05]]) #hard-coded goal configs, for now
-
+n_rob = 3
+# gconfigs = np.array([[0.2, -0.05], [-0.2, -0.05]]) #hard-coded goal configs, for now
+gconfigs = np.array([[0.30, -0.05], [0, 0.30], [-0.30, -0.05]])
 class MrdrrtCommanderNode:
 
     def __init__(self, *args):
@@ -85,24 +85,24 @@ class MrdrrtCommanderNode:
         # path = self.mrdrrt.FindPath(sconfigs, gconfigs)
 
         ### Load path from pickle
-        # rospack = rospkg.RosPack()
-        # path = rospack.get_path('mrdrrt')
-        # filepath = path + '/paths/tmap_path2.p'
-        # with open(filepath, 'rb') as f:
-        #     path = pickle.load(f)
+        rospack = rospkg.RosPack()
+        path = rospack.get_path('mrdrrt')
+        filepath = path + '/paths/tmap_path2.p'
+        with open(filepath, 'rb') as f:
+            path = pickle.load(f)
         
 
-        # print("num_robots:{}",format(len(path.keys())))
-        # for r in range(len(path.keys())):
-        #     path[r] =  self.AddAnglesToPath(path[r])
+        print("num_robots:{}".format(len(path.keys())))
+        for r in range(len(path.keys())):
+            path[r] =  self.AddAnglesToPath(path[r])
             # print path[r]
 
         ### Manually constructed path
-        path = {0: [np.array([0.17, -0.05, np.pi]), np.array([0,-0.05,np.pi/2]), np.array([0, 0.17, -np.pi/2]), np.array([0, -0.05, np.pi]), np.array([-0.17, -0.05, 0])] , 
-                1: [np.array([-0.17, -0.05, 0]), np.array([-0.17,-0.05,0]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi])]}
+        # path = {0: [np.array([0.17, -0.05, np.pi]), np.array([0,-0.05,np.pi/2]), np.array([0, 0.17, -np.pi/2]), np.array([0, -0.05, np.pi]), np.array([-0.17, -0.05, 0])] , 
+                # 1: [np.array([-0.17, -0.05, 0]), np.array([-0.17,-0.05,0]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi])]}
 
         # path = {0: [np.array([-0.17, -0.05, 0]),    np.array([0,-0.05,np.pi/2]),    np.array([0, 0.17, -np.pi/2]),  np.array([0, 0.17, -np.pi/2]), np.array([0,-0.05,np.pi]),
-        #             np.array([-0.17, -0.05, 0]),    np.array([-0.17, -0.05, 0]),    np.array([-0.17, -0.05, 0]),    np.array([0, -0.05, 0]),       np.array([0,0.17,np.pi/2])],
+        #             np.array([-0.17, -0.05, 0]),    np.array([-0.17, -0.05, 0]),    np.array([-0.17, -0.05, 0]),    np.array([0, -0.05, 0]),       np.array([0,0.17,-np.pi/2])],
         #         1: [np.array([0, 0.17, -np.pi/2]),  np.array([0, 0.17, np.pi/2]),   np.array([0, 0.34, -np.pi/2]),  np.array([0, 0.34, -np.pi/2]), np.array([0, 0.34, -np.pi/2]),
         #             np.array([0, 0.34, -np.pi/2]),  np.array([0,-0.05,0]),          np.array([0.17,-0.05,np.pi]),   np.array([0.17,-0.05,np.pi]),  np.array([0.17,-0.05,np.pi])],
         #         2: [np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi]), np.array([0.17, -0.05, np.pi]), np.array([-0.17, -0.05, 0]),   np.array([-0.34, -0.05, 0]), 
