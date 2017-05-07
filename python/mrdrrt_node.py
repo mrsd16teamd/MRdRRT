@@ -63,9 +63,16 @@ class MrdrrtCommanderNode:
         """
         path_w_angles = []
         for i, point in enumerate(point_path[0:-1]):  # First point -> second to last
-            vec2next = point_path[i+1] - point_path[i]
-            angle = np.arctan2(vec2next[1], vec2next[0])
-            config = np.append(point, angle)
+            # vec2next = point_path[i+1] - point_path[i]
+            # angle = np.arctan2(vec2next[1], vec2next[0])
+            # config = np.append(point, angle)
+            # path_w_angles.append(config)
+            if point[1] > 0: # y>0
+                config = np.append(point, -np.pi/2)
+            elif point[0] > 0:
+                config = np.append(point, np.pi)
+            else:
+                config = np.append(point, 0)
             path_w_angles.append(config)
 
         return path_w_angles
