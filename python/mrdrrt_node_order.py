@@ -16,6 +16,7 @@ from time import sleep
 from prm_planner import PRMPlanner
 from mrdrrt_planner import MRdRRTPlanner
 import cPickle as pickle
+from collections import defaultdict, deque
 
 n_rob = 3
 # gconfigs = np.array([[0.2, -0.05], [-0.2, -0.05]]) #hard-coded goal configs, for now
@@ -77,6 +78,78 @@ class MrdrrtCommanderNode:
 
         return path_w_angles
 
+    def kahn_topsort(graph):
+        in_degree = {u: 0 for u in graph}     # determine in-degree
+        for u in graph:                          # of each node
+            for v in graph[u]:
+                in_degree[v] += 1
+        Q = deque()                 # collect nodes with zero in-degree
+        for u in in_degree:
+            if in_degree[u] == 0:
+                Q.appendleft(u)
+        L = []     # list for order of nodes
+        while Q:
+            u = Q.pop()          # choose node of zero in-degree
+            L.append(u)          # and 'remove' it from graph
+            for v in graph[u]:
+                in_degree[v] -= 1
+                if in_degree[v] == 0:
+                    Q.appendleft(v)
+        if len(L) == len(graph):
+            return L
+        else:                    # if there is a cycle,
+            return []            # then return an empty list
+
+    def IsEmptyGraph(graph):
+        empty = True
+        for key in graph.keys():
+            if (len(graph[key]) != 0):
+                empty = False
+        return empty
+
+    def OrderRobotsOnPath(path):
+        orders = []
+        n_robots = len(path.keys())
+        orders.append([])  # Assume first step is always ok
+        for t in range(1, len(path[0])):
+            start_pos = [path[r][t-1] for r in range(n_robots)]
+            goal_pos = [path[r][t] for r in range(n_robots)]
+
+            # Build dependency graph
+            dgraph = defaultdict(list)
+            for i in range(n_robots):
+                for j in range(n_robots):
+                    if i != j:
+                        if (goal_pos[i] == start_pos[j]).all():
+                            dgraph[j].append(i)
+                if len(dgraph[i]) == 0:
+                    dgraph[i] = []
+
+            # Order robots
+            if (IsEmptyGraph(dgraph)):
+                order = []
+            else:
+                order = kahn_topsort(dgraph)
+            orders.append(order)
+            print('.')
+            print(start_pos)
+            print(goal_pos)
+            print(dgraph)
+            print(order)
+
+        path['o'] = orders
+        return path
+
+    def FillPoseMsg(self, point):
+        pose_msg = PoseStamped()
+        pose_msg.header.frame_id = "map"
+        pose_msg.pose.position.x, pose_msg.pose.position.y = point[0], point[1]
+
+        quat = tf.transformations.quaternion_from_euler(0, 0, point[2])
+        pose_msg.pose.orientation.x, pose_msg.pose.orientation.y, pose_msg.pose.orientation.z, pose_msg.pose.orientation.w = quat[0], quat[1], quat[2], quat[3]
+
+        return pose_msg
+
     def PlanPath(self, request):
         # Find robots' starting configurations
         # sconfigs = []
@@ -98,12 +171,15 @@ class MrdrrtCommanderNode:
         with open(filepath, 'rb') as f:
             path = pickle.load(f)
 
-        print("num_robots:{}".format(len(path.keys())))
+        n_waypoints = len(path[0])
+        n_rob = len(path.keys())
+
+        self.OrderRobotsOnPath(path)
         for r in range(len(path.keys())):
             path[r] =  self.AddAnglesToPath(path[r])
             # print path[r]
-
-
+        print("num_robots:{}".format(n_rob))
+        print("n_waypoints:{}", format(n_waypoints))
 
         ### Manually constructed path
         # path = {0: [np.array([0.17, -0.05, np.pi]), np.array([0,-0.05,np.pi/2]), np.array([0, 0.17, -np.pi/2]), np.array([0, -0.05, np.pi]), np.array([-0.17, -0.05, 0])] ,
@@ -118,30 +194,35 @@ class MrdrrtCommanderNode:
 
         print('Path: ', path)
 
-
         # Tell robots to follow their paths
 
-        update_rate = rospy.Rate(1) #tried slowing this down to give more buffer, but doesn't really help if the delay is in between steps
-        n_waypoints = len(path[0])
-        print("n_waypoints:{}",format(n_waypoints))
+        update_rate = rospy.Rate(1)  #tried slowing this down to give more buffer, but doesn't really help if the delay is in between steps
         for t in range(n_waypoints):
             print("Sending waypoints for step {}".format(t))
-            for r in range(n_rob):
-                # print("Robot {}, go!".format(r))
-                pose_msg = PoseStamped()
-                pose_msg.header.frame_id = "map"
-                pose_msg.pose.position.x, pose_msg.pose.position.y = path[r][t][0], path[r][t][1]
 
-                quat = tf.transformations.quaternion_from_euler(0, 0, path[r][t][2])
-                pose_msg.pose.orientation.x, pose_msg.pose.orientation.y, pose_msg.pose.orientation.z, pose_msg.pose.orientation.w = quat[0], quat[1], quat[2], quat[3]
-
-                self.waypoint_pubs[r].publish(pose_msg)
+            ordering = path['o'][t]
+            print(ordering)
+            if len(ordering) == 0:  # Send all robots at once
+                for r in range(n_rob):
+                    print("Robot {}, go!".format(r))
+                    pose_msg = FillPoseMsg(path[r][t])
+                    self.waypoint_pubs[r].publish(pose_msg)
 
                 # Wait for them to finish
-            self.n_robots_done = 0
-            while self.n_robots_done is not n_rob:
-                print("Waiting for robots to finish their waypoint")
-                update_rate.sleep()
+                self.n_robots_done = 0
+                while self.n_robots_done is not n_rob:
+                    print("Waiting for robots to finish their waypoint")
+                    update_rate.sleep()
+                print("sent commands to all robots")
+            else:
+                for r in ordering:  # TODO change this
+                    print("Robot {}, go!".format(r))
+                    pose_msg = FillPoseMsg(path[r][t])
+                    self.waypoint_pubs[r].publish(pose_msg)
+                    self.n_robots_done = 0
+                    while self.n_robots_done is not 1:
+                       print("Waiting for robots to finish their waypoint")
+                       update_rate.sleep()
             print("All robots done with step {}".format(t))
         print("All paths completed")
 
