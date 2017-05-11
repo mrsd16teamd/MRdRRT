@@ -5,14 +5,21 @@ from time import sleep
 
 
 def kahn_topsort(graph):
+    """
+    From: https://algocoding.wordpress.com/2015/04/05/topological-sorting-python/
+    """
     in_degree = {u: 0 for u in graph}     # determine in-degree
     for u in graph:                          # of each node
         for v in graph[u]:
             in_degree[v] += 1
+    print('in_degree: {}'.format(in_degree))
+
     Q = deque()                 # collect nodes with zero in-degree
     for u in in_degree:
         if in_degree[u] == 0:
             Q.appendleft(u)
+    print('Q: {}'.format(Q))
+
     L = []     # list for order of nodes
     while Q:
         u = Q.pop()          # choose node of zero in-degree
@@ -21,6 +28,7 @@ def kahn_topsort(graph):
             in_degree[v] -= 1
             if in_degree[v] == 0:
                 Q.appendleft(v)
+
     if len(L) == len(graph):
         return L
     else:                    # if there is a cycle,
@@ -78,11 +86,11 @@ def OrderRobotsOnPath(path):
         else:
             order = kahn_topsort(dgraph)
         orders.append(order)
-        print('.')
         print(start_pos)
         print(goal_pos)
         print(dgraph)
         print(order)
+        print('.')
 
     path['o'] = orders
     return path
